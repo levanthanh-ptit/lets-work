@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
-import {useDispatch } from 'react-redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -9,7 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button'
+
 import * as color from '../assets/color';
+
+import {login} from '../../redux/thunk/AuthThunk'
 
 const useStyles = makeStyles({
     card: {
@@ -39,13 +44,17 @@ const useStyles = makeStyles({
 
 });
 
-export default function AuthForm(props) {
+function AuthForm(props) {
     const [state, setState] = useState({
         username: "",
         password: "",
     })
-    const dispatch = useDispatch();
     const classes = useStyles();
+
+    var loginHandal = () =>{
+        props.
+    }
+
     return (
         <Card className={classes.card}>
             <CardHeader
@@ -101,7 +110,7 @@ export default function AuthForm(props) {
                     color='primary'
                     variant="text" 
                     onClick={()=>{
-                        alert(state.username+'   '+state.password)
+                        
                     }}    
                 >
                     <Typography color='secondary'>login</Typography>
@@ -111,3 +120,13 @@ export default function AuthForm(props) {
         </Card>
     )
 }
+const mapStateToProps = ({ Auth }) => ({
+    Auth: Auth
+  });
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        login
+    }, dispatch)
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AuthForm)

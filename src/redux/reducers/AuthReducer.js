@@ -1,8 +1,8 @@
 import {AUTH} from '../Types';
 
 const initialState = {
-    username:"",
-    password:"",
+    username:"abc",
+    password:"abc",
 }
 
 export default (state = initialState, { type, payload }) => {
