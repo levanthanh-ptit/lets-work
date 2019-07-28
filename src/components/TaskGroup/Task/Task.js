@@ -33,7 +33,7 @@ function Task(props) {
             monitor.getItem().index = index;
         },
         drop() {
-            onDragChange(null, null)
+            onDragChange(0, 0)
         },
     })
 

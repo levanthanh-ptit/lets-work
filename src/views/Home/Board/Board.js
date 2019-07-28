@@ -45,6 +45,10 @@ function Board(props) {
         open: false,
         id: null
     })
+    const [dragUp, setDragUp] = useState({
+        groupId: 0,
+        taskId: 0
+    })
     const [data, setData] = useState({
         groups: [
             // {
@@ -64,12 +68,7 @@ function Board(props) {
             // },
             // {
             //     id: 17, title: 'Done',
-            //     tasks: [
-            //         { id: 6, title: 'To do', description: 'too much' },
-            //         { id: 7, title: 'Inprocess', description: 'not many' },
-            //         { id: 8, title: 'Bug', description: 'a lot' },
-            //         { id: 9, title: 'Done', description: 'WTF is this' }
-            //     ]
+            //     tasks: []
             // },
             // {
             //     id: 18, title: 'To do',
@@ -82,18 +81,14 @@ function Board(props) {
             // },
         ],
     });
-
-    const [dragUp, setDragUp] = useState({
-        groupId: null,
-        taskId: null,
-    })
-
     useEffect(() => {
         const fetchData = async () => {
             axios.get(
                 `/project/6/groups`
-            ).then(data => {
-                setData({ groups: data.data })
+            ).then(res => {
+                console.log(res.data);
+                
+                setData({ groups: res.data })
             }).catch(err => {
 
             })
@@ -134,7 +129,7 @@ function Board(props) {
         })
     }
 
-    function handleOnSortTask(groupId, srcId, desId, direct) {
+    function handleSortTask(groupId, srcId, desId, direct) {
         var superArr = data.groups;
         var index = superArr.findIndex(e => { return e.id === groupId });
         let delIndex = superArr[index].tasks.findIndex(e => { return e.id === srcId });
@@ -149,7 +144,7 @@ function Board(props) {
     }
 
     const handleDragChange = (groupId, taskId) => {
-        setDragUp(groupId, taskId)
+        setDragUp({groupId, taskId})
     }
 
     const handleTaskDialogOpen = (id) => {
@@ -197,13 +192,12 @@ function Board(props) {
         const { id, title, description, groupId } = task;
         var dragUpState = false;
         if (dragUp.groupId === groupId && dragUp.taskId === id) dragUpState = true;
-
         return (<Task id={id}
             key={id}
             index={index}
             title={title}
             groupId={groupId}
-            onTaskShouldDrop={handleOnSortTask}
+            onTaskShouldDrop={handleSortTask}
             onDragChange={handleDragChange}
             dragUp={dragUpState}
             onTaskOpen={handleTaskDialogOpen}
@@ -218,14 +212,12 @@ function Board(props) {
                 {renderBoardHeader()}
                 <div className='board-canvas'>
                     <div id='board'>
-                        {
-                            data.groups.map((group, index) => {
-                                var tasks = group.tasks.map((task, t_index) => {
-                                    return renderTask({ ...task, groupId: group.id }, t_index)
-                                })
-                                return renderTaskGroup(group, index, tasks)
+                        {data.groups.map((group, index) => {
+                            var tasks = group.tasks.map((task, t_index) => {
+                                return renderTask({ ...task, groupId: group.id }, t_index)
                             })
-                        }
+                            return renderTaskGroup(group, index, tasks)
+                        })}
                     </div>
                 </div>
                 <TaskDialog open={taskDialog.open} id={taskDialog.id} onClose={handleTaskDialogClose} />

@@ -29,7 +29,7 @@ function TaskGroup(props) {
             }
         },
         drop(item) {
-            onDrapChange(null, null)
+            onDrapChange(0, 0)
             if (item.type === TaskTypes.TASK) {
                 if (item.groupId === id) return;
                 onTaskShouldDrop(item.id, item.groupId, id);
