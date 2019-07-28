@@ -1116,6 +1116,13 @@
     react-transition-group "^4.0.0"
     warning "^4.0.1"
 
+"@material-ui/icons@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.2.1.tgz#fe2f1c4f60c24256d244a69d86d0c00e8ed4037e"
+  integrity sha512-FvSD5lUBJ66frI4l4AYAPy2CH14Zs2Dgm0o3oOMr33BdQtOAjCgbdOcvPBeaD1w6OQl31uNW3CKOE8xfPNxvUQ==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+
 "@material-ui/styles@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.2.0.tgz#dafb8a271cb6772354aece15d3e43af33844f692"
@@ -3442,10 +3449,10 @@ dir-glob@2.0.0:
     arrify "^1.0.1"
     path-type "^3.0.0"
 
-dnd-core@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-9.0.0.tgz#8acba067209359397eafd259c288908e6bb0517b"
-  integrity sha512-w+6gabMm8klxbIjGSG2JRF/TQVwir67N5/VQf6tFjGHl+ZgRy3lN8OcKQN6LCSHKgNHSiivDBMLCWm8NOSvKLQ==
+dnd-core@^9.3.2:
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/dnd-core/-/dnd-core-9.3.2.tgz#d30f4a53fc296d6fedee05ed690db97974c7decc"
+  integrity sha512-cc6aAFmLDYdXguC+YbKB+SCsXlNd+LS/+T22M4OpmehWI3wBqXBik3o+myjr19ie3K11S3ATTiwir7b0s3TAhw==
   dependencies:
     "@types/asap" "^2.0.0"
     "@types/invariant" "^2.2.30"
@@ -6337,6 +6344,11 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
 
+lodash@^4.17.15:
+  version "4.17.15"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+
 loglevel@^1.4.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
@@ -8449,14 +8461,21 @@ react-dev-utils@^9.0.1:
     strip-ansi "5.2.0"
     text-table "0.2.0"
 
-react-dnd@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-9.0.1.tgz#ebe5d893e43a0faa2b004c15c46d87545502663c"
-  integrity sha512-i8K4tofoF+nB/GAcROiDv5Q5oiQaoiD1xDK6/3OCC9plU/53eO1sTwiUl7I2upyzzyBvmGYVJ8HwiBx6rEZhog==
+react-dnd-html5-backend@^9.3.2:
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-9.3.2.tgz#4833043aec91e69dd968ac136deebf7535f5eb9d"
+  integrity sha512-EsQLA3fikHxkkvs6COnEdo3McJg2Q82z6EQxo7s3yqez4LAutrcp7pf5/eyW1nFDcdN3JNx2p+TrkjVjEd5exw==
+  dependencies:
+    dnd-core "^9.3.2"
+
+react-dnd@^9.3.2:
+  version "9.3.2"
+  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-9.3.2.tgz#e06c0f566201fbd4617db6d023fcb45629874bbc"
+  integrity sha512-3xwrd+z25CplNmO1j6BmvFlL72fK0IjW0WqCV7NCYLvKCjomZLhf3ZPAfCyCOSP9riTglnh53OV47M3ydo25ZA==
   dependencies:
     "@types/hoist-non-react-statics" "^3.3.1"
     "@types/shallowequal" "^1.1.1"
-    dnd-core "^9.0.0"
+    dnd-core "^9.3.2"
     hoist-non-react-statics "^3.3.0"
     shallowequal "^1.1.0"
 

@@ -1,17 +1,22 @@
-import {AUTH} from '../Types';
+import { AUTH } from '../Types';
 
 const initialState = {
-    username:"abc",
-    password:"abc",
+    token: null,
+    status: null,
 }
 
 export default (state = initialState, { type, payload }) => {
     switch (type) {
 
-    case AUTH.LOGIN:
-        return { ...state, ...payload }
-
-    default:
-        return state
+        case AUTH.LOGIN_START:
+            return { ...state, ...payload }
+        case AUTH.LOGIN_SUCCESS:
+            return { ...state, ...payload }
+        case AUTH.LOGIN_FAIL:
+            return { ...state, ...payload }
+        case AUTH.LOGOUT:
+            return { ...state, ...payload }
+        default:
+            return state
     }
 }

@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -10,11 +9,11 @@ import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
+import MessageDialog from '../MessageDialog/MessageDialog';
+import Fade from '@material-ui/core/Fade';
 
 import * as color from '../assets/color';
-
-import {login} from '../../redux/thunk/AuthThunk'
 
 const useStyles = makeStyles({
     card: {
@@ -24,6 +23,7 @@ const useStyles = makeStyles({
     },
     cardHeader: {
         background: color.color_bg_white90,
+        textAlign: 'center',
         // borderBottomColor: color.color_bg_blue30,
         // borderBottomWidth: 1,
         // borderBottomStyle: "solid"
@@ -35,7 +35,7 @@ const useStyles = makeStyles({
         background: color.color_bg_white80
     },
     cardAction: {
-        background: color.color_bg_white90        
+        background: color.color_bg_white90
     },
     textField: {
         marginTop: 20,
@@ -45,88 +45,108 @@ const useStyles = makeStyles({
 });
 
 function AuthForm(props) {
+    const { Auth, login, logout } = props;
+
     const [state, setState] = useState({
         username: "",
         password: "",
-    })
+        authStatus: props.Auth.status,
+    });
     const classes = useStyles();
 
-    var loginHandal = () =>{
-        props.
+    function handleLogin() {
+        login(state.username, state.password);
+    };
+
+    const handleMessageDialog = (open) => {
+        if (!open) logout()
     }
 
-    return (
-        <Card className={classes.card}>
-            <CardHeader
-                className={classes.cardHeader}
-                title="SIGN IN"
-            />
-            <CardContent
-                className={classes.cardContent}
-            >
-                <TextField
-                    fullWidth
-                    type='email'
-                    label="User name"
-                    className={classes.textField}   
-                    margin="dense"
-                    variant="outlined" 
-                    value={state.username}
-                    onChange={(e)=>setState({
-                        ...state,
-                        username: e.target.value
-                    })}
-                    />
-                <TextField
-                    fullWidth
-                    type='password'
-                    label="Password"
-                    className={classes.textField}
-                    margin="dense"
-                    variant="outlined" 
-                    value={state.password}
-                    onChange={(e)=>setState({
-                        ...state,
-                        password: e.target.value
-                    })}
-                    />
-                <Link 
-                    underline='none' 
-                    component='button' 
-                    color='primary'
-                    onClick={()=>{
-                        alert('redirect')
-                    }}
-                >
-                    Not have a account? sign up now
-                </Link>
-            </CardContent>
-            <CardActions
-                className={classes.cardAction}
-            >
-                <Button
-                    className={classes.button}
-                    fullWidth
-                    color='primary'
-                    variant="text" 
-                    onClick={()=>{
-                        
-                    }}    
-                >
-                    <Typography color='secondary'>login</Typography>
-                </Button>
-            </CardActions>
+    if (Auth.status !== state.authStatus)
+        setState({
+            ...state,
+            authStatus: Auth.status
+        })
 
-        </Card>
+    return (
+        <React.Fragment>
+            <Fade in>
+                <Card className={classes.card}>
+                    <CardHeader
+                        className={classes.cardHeader}
+                        title="SIGN IN"
+                    />
+                    <CardContent
+                        className={classes.cardContent}
+                    >
+                        <TextField
+                            fullWidth
+                            type='email'
+                            label="User name"
+                            className={classes.textField}
+                            margin="dense"
+                            variant="outlined"
+                            value={state.username}
+                            onChange={(e) => setState({
+                                ...state,
+                                username: e.target.value
+                            })}
+                        />
+                        <TextField
+                            fullWidth
+                            type='password'
+                            label="Password"
+                            className={classes.textField}
+                            margin="dense"
+                            variant="outlined"
+                            value={state.password}
+                            onChange={(e) => setState({
+                                ...state,
+                                password: e.target.value
+                            })}
+                        />
+                        <Link
+                            underline='none'
+                            component='button'
+                            color='primary'
+                            onClick={() => {
+                                alert(props.Auth.token)
+                            }}
+                        >
+                            Not have a account? sign up now
+                </Link>
+                    </CardContent>
+                    <CardActions
+                        className={classes.cardAction}
+                    >
+                        <Button
+                            className={classes.button}
+                            fullWidth
+                            color='primary'
+                            variant="text"
+                            onClick={() => handleLogin()}
+                        >
+                            <Typography color='secondary'>login</Typography>
+                        </Button>
+                    </CardActions>
+                </Card>
+            </Fade>
+            <MessageDialog
+                open={Auth.status != null}
+                handleClose={handleMessageDialog}
+                title='Sign in message'
+            >
+                {props.Auth.status}
+            </MessageDialog>
+        </React.Fragment>
     )
 }
-const mapStateToProps = ({ Auth }) => ({
-    Auth: Auth
-  });
 
-const mapDispatchToProps = dispatch => {
-    return bindActionCreators({
-        login
-    }, dispatch)
+AuthForm.propTypes = {
+    Auth: PropTypes.object,
+    login: PropTypes.func,
+    logout: PropTypes.func,
 }
-export default connect(mapStateToProps, mapDispatchToProps)(AuthForm)
+
+export default AuthForm
+

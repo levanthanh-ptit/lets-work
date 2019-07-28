@@ -1,14 +1,27 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import './App.css';
 import AuthPage from './views/Auth/AuthPage';
+import Home from './views/Home/Home'
 
-function App() {
+
+export function App(props) {
+  const {token} = props.Auth;
   return (
     <div className="App">
-      <AuthPage/>
+      {token?
+        <Home/>:
+        <AuthPage/>
+      }
+      {/* <Home/> */}
     </div>
-  );
+  )
 }
 
-export default App;
+const mapStateToProps = ({ Auth }) => ({
+  Auth: Auth
+});
+
+export default connect(mapStateToProps, null)(App)
+

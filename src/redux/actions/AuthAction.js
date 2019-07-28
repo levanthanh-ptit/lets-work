@@ -19,8 +19,8 @@ export const loginFail = () => ({
     }
 })
 export const logout = () => ({
-    type: AUTH.LOGIN_FAIL,
+    type: AUTH.LOGOUT,
     payload: {
-        status: 'fail',
+        status: null,
     }
 })
