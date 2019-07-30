@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
+import './Group.scss'
 
-import './TaskGroup.scss'
+import Button from '@material-ui/core/Button';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import { Types as TaskTypes } from './Task/Task'
+
 export const Types = {
-    TASK_GROUP: 'TASK_GROUP',
+    GROUP: 'GROUP',
 }
 
-function TaskGroup(props) {
+function Group(props) {
     const { id, index, title, children, onGroupShouldDrop, onTaskShouldDrop, onDrapChange } = props;
+
+    const [addTask, setAddTask] = useState({
+        open: false,
+        title: "",
+    });
+
     const [, drag] = useDrag({
         item: {
             type: Types.TASK_GROUP,
@@ -18,13 +27,14 @@ function TaskGroup(props) {
             index,
         },
     });
+
     const [{ isGroupOver }, drop] = useDrop({
         accept: [Types.TASK_GROUP, TaskTypes.TASK],
         hover(item, monitor) {
             if (item.type === Types.TASK_GROUP) {
                 if (item.index === props.index)
                     return
-                    onGroupShouldDrop('groups', item.id, id, index > item.index);
+                onGroupShouldDrop('groups', item.id, id, index > item.index);
                 monitor.getItem().index = index;
             }
         },
@@ -49,9 +59,27 @@ function TaskGroup(props) {
 
     })
 
-    const handleAddTask = () => {
-        alert('a')
+    const handleOpenAddTask = () => {
+        setAddTask({
+            ...addTask,
+            open: !addTask.open,
+            title: ''
+        })
     }
+
+    const renderAddTaskInput = () => (
+        <ClickAwayListener onClickAway={handleOpenAddTask}>
+            <div className="addTask">
+                <input 
+                    placeholder='Enter title for this card...' 
+                    value={addTask.title}
+                    onChange={e => setAddTask({...addTask, title: e.target.value})}
+                />
+                <Button className="btnAddTask" size="small">add</Button>
+                <button className="btnCancelAddTask" onClick={handleOpenAddTask}>X</button>
+            </div>
+        </ClickAwayListener>
+    )
 
     return drop(
         <div className={`TaskGroupContainerWrap ${isGroupOver ? "over" : ""}`} >
@@ -64,7 +92,17 @@ function TaskGroup(props) {
                     </div>
                     <div className="content">
                         {children}
-                        <div className={`addTaskHolder`} onClick={() => handleAddTask()}>+ Add a card here</div>
+                        {addTask.open ?
+                            renderAddTaskInput()
+                            :
+                            <div
+                                className={`addTaskHolder`}
+                                onClick={() => handleOpenAddTask()}
+                            >
+                                + Add a card here
+                            </div>
+
+                        }
                     </div>
                 </div>
             )}
@@ -72,15 +110,16 @@ function TaskGroup(props) {
     )
 }
 
-TaskGroup.propTypes = {
+Group.propTypes = {
     id: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
     onGroupShouldDrop: PropTypes.func.isRequired,
     onTaskShouldDrop: PropTypes.func,
     onDrapChange: PropTypes.func,
+    onAddTask: PropTypes.func,
 }
 
-export default TaskGroup
+export default Group
 
 
 

@@ -4,3 +4,12 @@ export const AUTH = {
     LOGIN_FAIL: 'LOGIN_FAIL',
     LOGOUT: 'LOGOUT'
 }
+
+export const PROJECT = {
+    LOAD_START: "LOAD_START",
+    LOAD_SUCCESS: "LOAD_SUCCESS",
+    LOAD_FAIL: "LOAD_FAIL",
+    UPDATE: "UPDATE",
+    ADD_TASK: 'ADD_TASK',
+    ADD_GROUP: 'ADD_GROUP',
+}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
-import axios from '../../../axios/axios'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as color from '../../../components/assets/color';
 import './Board.scss'
@@ -10,8 +12,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import Fade from '@material-ui/core/Fade';
 
-import TaskGroup from '../../../components/TaskGroup/TaskGroup';
-import Task from '../../../components/TaskGroup/Task/Task';
+import * as Thunk from '../../../redux/thunk/ProjectThunk'
+import Group from '../../../components/Group/Group';    
+import Task from '../../../components/Group/Task/Task';
 import TaskDialog from './TaskDialog'
 
 const useStyle = makeStyles(theme => ({
@@ -40,7 +43,8 @@ const useStyle = makeStyles(theme => ({
 
 function Board(props) {
     const classes = useStyle();
-    const { id, boardName } = props;
+    const { id, boardName, data, load, moveTask, handleOnSort, handleSortTask } = props;
+
     const [taskDialog, setTaskDialog] = useState({
         open: false,
         id: null
@@ -49,99 +53,11 @@ function Board(props) {
         groupId: 0,
         taskId: 0
     })
-    const [data, setData] = useState({
-        groups: [
-            // {
-            //     id: 15, title: 'Inprocess',
-            //     tasks: [
-            //         { id: 1, title: 'To do', description: 'too much' },
-            //         { id: 2, title: 'Inprocess', description: 'not many' },
-            //     ]
-            // },
-            // {
-            //     id: 16, title: 'Bug',
-            //     tasks: [
-            //         { id: 3, title: 'Inprocess', description: 'not many' },
-            //         { id: 4, title: 'Bug', description: 'a lot' },
-            //         { id: 5, title: 'Done', description: 'WTF is this' }
-            //     ]
-            // },
-            // {
-            //     id: 17, title: 'Done',
-            //     tasks: []
-            // },
-            // {
-            //     id: 18, title: 'To do',
-            //     tasks: [
-            //         { id: 10, title: 'To do', description: 'too much' },
-            //         { id: 11, title: 'Inprocess', description: 'not many' },
-            //         { id: 12, title: 'Bug', description: 'a lot' },
-            //         { id: 13, title: 'Done', description: 'WTF is this' }
-            //     ]
-            // },
-        ],
-    });
+    console.log(data);
+    
     useEffect(() => {
-        const fetchData = async () => {
-            axios.get(
-                `/project/6/groups`
-            ).then(res => {
-                console.log(res.data);
-                
-                setData({ groups: res.data })
-            }).catch(err => {
-
-            })
-        }
-        fetchData();
-    }, [id])
-
-    function getTask(groupId, id) {
-        var group = data.groups.find(e => { return e.id === groupId });
-        return group.tasks.find(e => { return e.id === id })
-    }
-
-    function moveTask(taskId, srcGroupId, targetGroupId) {
-        let arr = data.groups;
-
-        let srcGroupIndex = arr.findIndex(group => { return group.id === srcGroupId });
-        let taskIndex = arr[srcGroupIndex].tasks.findIndex(t => { return t.id === taskId });
-        let task = arr[srcGroupIndex].tasks[taskIndex];
-        let targetGroupIndex = arr.findIndex(group => { return group.id === targetGroupId; });
-        arr[srcGroupIndex].tasks.splice(taskIndex, 1);
-        arr[targetGroupIndex].tasks = [...arr[targetGroupIndex].tasks, task];
-        setData({
-            ...data,
-            groups: arr,
-        })
-    }
-
-    function handleOnSort(feild, srcId, desId, direct) {
-        var arr = data[feild];
-        let delIndex = arr.findIndex(e => { return e.id === srcId });
-        let srcElement = arr.find(e => { return e.id === srcId });
-        arr.splice(delIndex, 1);
-        let insertIndex = arr.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
-        arr.splice(insertIndex, 0, srcElement);
-        setData({
-            ...data,
-            [feild]: arr,
-        })
-    }
-
-    function handleSortTask(groupId, srcId, desId, direct) {
-        var superArr = data.groups;
-        var index = superArr.findIndex(e => { return e.id === groupId });
-        let delIndex = superArr[index].tasks.findIndex(e => { return e.id === srcId });
-        let srcElement = superArr[index].tasks.find(e => { return e.id === srcId });
-        superArr[index].tasks.splice(delIndex, 1);
-        let insertIndex = superArr[index].tasks.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
-        superArr[index].tasks.splice(insertIndex, 0, srcElement);
-        setData({
-            ...data,
-            groups: superArr
-        })
-    }
+        load(id);
+    }, [])
 
     const handleDragChange = (groupId, taskId) => {
         setDragUp({groupId, taskId})
@@ -168,7 +84,7 @@ function Board(props) {
                 position='static'
             >
                 <Toolbar variant="regular">
-                    {data.boardName}
+                    {boardName}
                 </Toolbar>
             </AppBar>
         </Fade>
@@ -176,7 +92,7 @@ function Board(props) {
 
     const renderTaskGroup = (taskGroup, index, children) => {
         const { id, title, } = taskGroup;
-        return (<TaskGroup id={id}
+        return (<Group id={id}
             key={id}
             index={index}
             title={title}
@@ -185,7 +101,7 @@ function Board(props) {
             onDrapChange={handleDragChange}
         >
             {children}
-        </TaskGroup>)
+        </Group>)
     }
 
     const renderTask = (task, index) => {
@@ -227,8 +143,22 @@ function Board(props) {
 }
 
 Board.propTypes = {
-
+    boardName: PropTypes.string,
+    id: PropTypes.number
 }
 
-export default Board
+const mapStateToProps = ({ Project }) => ({
+    data: Project
+});
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        load: Thunk.load,
+        moveTask: Thunk.moveTask,
+        handleOnSort: Thunk.handleOnSort,
+        handleSortTask: Thunk.handleSortTask,
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Board)
 

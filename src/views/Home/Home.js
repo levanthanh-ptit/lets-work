@@ -1,35 +1,29 @@
 import React, { useState } from 'react'
 import './Home.scss'
 
-import AppDrawer from '../../components/SideBar/SideBar';
+import SideBar from '../../components/SideBar/SideBar';
 import NavBar from '../../components/NavBar/NavBar';
 import Board from "./Board/Board";
 
 function Home(props) {
-    const [state, setState] = useState({
-        AppDrawer: {
-            open: false,
-        }
-    });
+    const [sideBar, setSideBar] = useState({
+        open: false,
+    })
 
-    function handleOpenAppDrawer() {
-        setState({
-            ...state,
-            AppDrawer: {
-                ...AppDrawer,
-                open: !state.AppDrawer.open,
-            }
+    function handleOpenSideBar() {
+        setSideBar({
+            open: !sideBar.open
         })
     }
     return (
         <div className='home-container'>
             <NavBar 
-            onButtonMenuClick={handleOpenAppDrawer} />
-            <AppDrawer
-            open={state.AppDrawer.open}
-            onClose={handleOpenAppDrawer}
+            onButtonMenuClick={handleOpenSideBar} />
+            <SideBar
+            open={sideBar.open}
+            onClose={handleOpenSideBar}
             />
-            <Board/>
+            <Board id={6} boardName="untitled"/>
         </div>
     )
 }

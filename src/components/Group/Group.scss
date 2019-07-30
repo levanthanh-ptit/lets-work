@@ -1,0 +1,93 @@
+.TaskGroupContainerWrap {
+  height: 100%;
+  &.over {
+    .TaskGroupContainer {
+      background-color: #00000080;
+      > div {
+        visibility: hidden;
+      }
+    }
+  }
+  .TaskGroupContainer {
+    background-color: #dfe1e6;
+    min-width: 15.8rem;
+    max-height: 100%;
+    border-radius: 0.2rem;
+    padding: 0.4rem;
+    box-sizing: border-box;
+    display: block;
+    .title {
+      display: block;
+      padding-bottom: 0.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-overflow: ellipsis;
+      text-align: center;
+      margin-right: 0.3rem;
+    }
+    .content {
+      display: block;
+      .addTaskHolder {
+        display: block;
+        margin-top: 0.4rem;
+        background-color: #0000001a;
+        min-height: 2rem;
+        min-width: 15rem;
+        width: 100%;
+        border-radius: 0.2rem;
+        padding: 0.4rem;
+        box-sizing: border-box;
+        color: grey;
+        cursor: pointer;
+        &:hover {
+          background-color: #00000034;
+        }
+      }
+      .addTask {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 15rem;
+        box-sizing: border-box;
+        > input {
+          outline: none;
+          display: block;
+          margin-top: 0.4rem;
+          min-height: 2rem;
+          width: 100%;
+          border-radius: 0.2rem;
+          padding: 0.4rem;
+          box-sizing: border-box;
+          border: none;
+        }
+        >.btnAddTask{
+          display: inline-block;
+          margin-top: 0.4rem;
+          margin-right: 0.6rem;
+          min-height: 2rem;
+          background: #5aac44;
+          color: white;
+          &:hover{
+            background: #61bd4f;
+          }
+        }
+        >.btnCancelAddTask{
+          outline: none;
+          display: inline-block;
+          margin: 0;
+          margin-top: 0.4rem;
+          height: 2rem;
+          min-height: 2rem;
+          border: none;
+          background: transparent;
+          font-size: 1.2rem;
+          font-weight: 500;
+          color: #6b778c;
+          cursor: pointer;
+          &:hover{
+            color: #42526e;
+          }
+        }
+      }
+    }
+  }
+}
