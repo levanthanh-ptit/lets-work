@@ -1,15 +1,15 @@
-import * as Project from '../actions/ProjectAction'
+import * as ProjectAction from '../actions/ProjectAction'
 import axios from '../../axios/axios'
 
 export function load(id) {
     return async (dispatch, getState) => {
-        dispatch(Project.loadStart());
+        dispatch(ProjectAction.loadStart());
         axios.get(
             `/project/${id}/groups`
         ).then(res => {
-            dispatch(Project.loadSuccess(id, res.data));
+            dispatch(ProjectAction.loadSuccess(id, res.data));
         }).catch(err => {
-            dispatch(Project.loadFail())
+            dispatch(ProjectAction.loadFail())
         })
     }
 }
@@ -23,7 +23,7 @@ export function handleOnSort(feild, srcId, desId, direct) {
         arr.splice(delIndex, 1);
         let insertIndex = arr.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
         arr.splice(insertIndex, 0, srcElement);
-        dispatch(Project.update(arr))
+        dispatch(ProjectAction.update(arr))
     }
 }
 
@@ -39,7 +39,7 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
             let targetGroupIndex = arr.findIndex(group => { return group.id === targetGroupId; });
             arr[srcGroupIndex].tasks.splice(taskIndex, 1);
             arr[targetGroupIndex].tasks = [...arr[targetGroupIndex].tasks, task];
-            dispatch(Project.update(arr))
+            dispatch(ProjectAction.update(arr))
         } catch (error) {
             console.log(error);
         }
@@ -57,22 +57,43 @@ export function handleSortTask(groupId, srcId, desId, direct) {
         superArr[index].tasks.splice(delIndex, 1);
         let insertIndex = superArr[index].tasks.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
         superArr[index].tasks.splice(insertIndex, 0, srcElement);
-        dispatch(Project.update(superArr))
+        dispatch(ProjectAction.update(superArr))
     }
 }
 
-export function addNewTask(groupId, title){
+export function addTask(groupId, title, callback){
     return async (dispatch, getState) => {
-        dispatch(Project.loadStart());
+        dispatch(ProjectAction.loadStart());
         axios.post(
             `/group/${groupId}/add-task`,
             {
                 title
             }
         ).then(res => {
-            dispatch((res.data));
+            dispatch(ProjectAction.addTask(groupId, res.data));
+            console.log(res.data);
+            callback();
+            
         }).catch(err => {
-            dispatch(Project.loadFail())
+            dispatch(ProjectAction.loadFail())
+        })
+    }
+}
+export function addGroup(projectId, title, callback){
+    return async (dispatch, getState) => {
+        dispatch(ProjectAction.loadStart());
+        axios.post(
+            `/project/${projectId}/add-group`,
+            {
+                title
+            }
+        ).then(res => { 
+            dispatch(ProjectAction.addGroup(res.data));
+            console.log(res.data);
+            callback();
+            
+        }).catch(err => {
+            dispatch(ProjectAction.loadFail())
         })
     }
 }

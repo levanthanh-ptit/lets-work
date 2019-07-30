@@ -1,19 +1,12 @@
-.board-canvas{
-    position: relative;
-    flex-grow: 1;
-}
-#board{
+.board{
     user-select: none;
     white-space: nowrap;
     margin-bottom: 8px;
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 12px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    height: 100%;
+    flex-grow: 1;
     >div{
         display: inline-block;
         vertical-align: top;
@@ -25,20 +18,36 @@
     };
     
 }
-#board::-webkit-scrollbar {
+.board::-webkit-scrollbar {
     height: 12px;
     width: 12px;
 }
-#board::-webkit-scrollbar-button {
+.board::-webkit-scrollbar-button {
     display: block;
     height: 4px;
     width: 4px;
 }
-#board::-webkit-scrollbar-track-piece {
+.board::-webkit-scrollbar-track-piece {
     background: rgba(0,0,0,0.3);
     border-radius: 4px;
 }
-#board::-webkit-scrollbar-thumb {
+.board::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,.6);
     border-radius: 4px;
+}
+#board .addGroupTextHolder{
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    width: 15.8rem;
+    height: 2.5rem;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    color: rgba($color: #FFFFFF, $alpha: 0.5);
+    background: #00000070;
+    border-radius: 0.2rem;
+    &:hover{
+        background: #00000080;
+        color: rgba($color: #FFFFFF, $alpha: 0.8);
+    }
 }

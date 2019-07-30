@@ -11,11 +11,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Fade from '@material-ui/core/Fade';
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        flexGrow: 1,
+    navBarRoot: {
+        // flexGrow: 1,
         flexDirection: "row",
         width: '100%',
-        position: "fixed",
+        // position: "fixed",
     },
     appBar: {
         background: color.color_bg_black60,
@@ -60,7 +60,7 @@ function NavBar(props) {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <div className={classes.navBarRoot}>
             <Fade in>
                 <AppBar
                     className={classes.appBar}

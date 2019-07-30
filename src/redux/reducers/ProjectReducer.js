@@ -30,11 +30,25 @@ export default (state = initialState, { type, payload }) => {
                 status: 'done',
                 ...payload
             }
-        case PROJECT.ADD_TASK:
+        case PROJECT.ADD_TASK: {
+            let groups = state.groups;
+            let index = groups.findIndex((e) => { return e.id === payload.id });
+            groups[index].tasks.push(payload.task)
+            console.log(groups);
+
             return {
                 ...state,
-                groups: [ ...state.groups.push(payload)]
+                groups
             }
+        }
+        case PROJECT.ADD_GROUP: {
+            let groups = state.groups;
+            groups.push(payload)
+            return {
+                ...state,
+                groups
+            }
+        }
         default:
             return state
     }

@@ -24,9 +24,6 @@ const useStyles = makeStyles({
     cardHeader: {
         background: color.color_bg_white90,
         textAlign: 'center',
-        // borderBottomColor: color.color_bg_blue30,
-        // borderBottomWidth: 1,
-        // borderBottomStyle: "solid"
     },
     cardContent: {
         display: 'flex',

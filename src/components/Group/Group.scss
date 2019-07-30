@@ -1,5 +1,6 @@
 .TaskGroupContainerWrap {
   height: 100%;
+  width: 15.8rem;
   &.over {
     .TaskGroupContainer {
       background-color: #00000080;
@@ -27,6 +28,9 @@
     }
     .content {
       display: block;
+      >div{
+        margin-top: 0.4rem;
+      }
       .addTaskHolder {
         display: block;
         margin-top: 0.4rem;

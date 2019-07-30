@@ -2,12 +2,14 @@ import React from 'react';
 import "./AuthPage.scss"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {Redirect} from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import AuthForm from '../../components/AuthForm/AuthForm';
-import { login as loginThunk, logout as logoutThgunk } from '../../redux/thunk/AuthThunk'
+import * as Thunk from '../../redux/thunk/AuthThunk';
+import {AUTH} from '../../redux/Types'
 
 const useStyles = makeStyles({
     grid: {
@@ -20,6 +22,7 @@ const useStyles = makeStyles({
 function AuthPage(props) {
     const {Auth, login, logout} = props;
     const classes = useStyles();
+    if(Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to="user"/>
     return (
         <div className = "auth-container">
             <Grid
@@ -42,8 +45,8 @@ const mapStateToProps = ({ Auth }) => ({
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        login: loginThunk,
-        logout: logoutThgunk
+        login: Thunk.login,
+        logout: Thunk.logout
     }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(AuthPage)

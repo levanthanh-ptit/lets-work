@@ -1,0 +1,80 @@
+.add-container-wrap {
+  display: block;
+  &.horizontal {
+    width: 15rem;
+  }
+  &.vertical {
+    width: 100%;
+  }
+}
+.add-holder {
+  display: block;
+  margin: 0;
+  min-height: 2rem;
+  min-width: 15rem;
+  width: 100%;
+  border-radius: 0.2rem;
+  line-height: 2rem;
+  text-indent: 0.3rem;
+  box-sizing: border-box;
+  background-color: #00000070;
+  color: rgba($color: #ffffff, $alpha: 0.5);
+  cursor: pointer;
+  &.light{
+    background-color: transparent;
+      color: grey;
+  }
+  &:hover {
+    background-color: #00000034;
+    color: rgba($color: #ffffff, $alpha: 0.8);
+  }
+}
+.add-container {
+  background-color: #dfe1e6;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  border-radius: 0.2rem;
+  box-sizing: border-box;
+  padding: 0.4rem;
+  > input {
+    outline: none;
+    display: block;
+    margin-bottom: 0.4rem;
+    min-height: 2rem;
+    width: 100%;
+    border-radius: 0.2rem;
+    padding: 0.4rem;
+    box-sizing: border-box;
+    border: none;
+  }
+  > .btn-add {
+    display: inline-block;
+    margin-right: 0.6rem;
+    height: 2rem;
+
+    background: #5aac44;
+    color: white;
+    &:hover {
+      background: #61bd4f;
+    }
+  }
+  > .btn-cancel {
+    outline: none;
+    display: inline-block;
+    height: 2rem;
+    min-height: 2rem;
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #6b778c;
+    cursor: pointer;
+    &:hover {
+      color: #42526e;
+    }
+  }
+}
+.hidden {
+  display: none;
+}

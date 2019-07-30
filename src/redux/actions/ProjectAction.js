@@ -10,8 +10,9 @@ export const loadSuccess = (id, groups) => ({
         groups: groups
     }
 })
-export const loadFail = () => ({
+export const loadFail = (error) => ({
     type: PROJECT.LOAD_FAIL,
+    error
 })
 export const update = (groups) => ({
     type: PROJECT.UPDATE,
@@ -20,8 +21,15 @@ export const update = (groups) => ({
     }
 })
 
-export const addTask = (payload) => ({
+export const addTask = (groupId, payload) => ({
+    type: PROJECT.ADD_TASK,
+    payload:{
+        id: groupId,
+        task: payload
+    }
+})
+
+export const addGroup = (payload) => ({
     type: PROJECT.ADD_TASK,
     payload
 })
-

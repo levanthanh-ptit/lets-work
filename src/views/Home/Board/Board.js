@@ -13,16 +13,18 @@ import AppBar from '@material-ui/core/AppBar';
 import Fade from '@material-ui/core/Fade';
 
 import * as Thunk from '../../../redux/thunk/ProjectThunk'
-import Group from '../../../components/Group/Group';    
+import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
-import TaskDialog from './TaskDialog'
+import TaskDialog from './TaskDialog';
+import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar';
+import TextInput from '../../../components/TextInput/TextInput'
 
 const useStyle = makeStyles(theme => ({
 
     root: {
         flexGrow: 1,
         boxSizing: 'border-box',
-        marginTop: theme.spacing(6),
+        // marginTop: theme.spacing(6),
         display: 'flex',
         flexDirection: 'column',
     },
@@ -43,24 +45,31 @@ const useStyle = makeStyles(theme => ({
 
 function Board(props) {
     const classes = useStyle();
-    const { id, boardName, data, load, moveTask, handleOnSort, handleSortTask } = props;
+    const { id, boardName, data,
+        load,
+        moveTask,
+        handleOnSort,
+        handleSortTask,
+        handleAddTask,
+        handleAddGroup,
+        handleProgressBar } = props;
 
     const [taskDialog, setTaskDialog] = useState({
         open: false,
         id: null
     })
+   
     const [dragUp, setDragUp] = useState({
         groupId: 0,
         taskId: 0
     })
-    console.log(data);
-    
+
     useEffect(() => {
         load(id);
-    }, [])
+    },[id, load])
 
     const handleDragChange = (groupId, taskId) => {
-        setDragUp({groupId, taskId})
+        setDragUp({ groupId, taskId })
     }
 
     const handleTaskDialogOpen = (id) => {
@@ -99,6 +108,10 @@ function Board(props) {
             onGroupShouldDrop={handleOnSort}
             onTaskShouldDrop={moveTask}
             onDrapChange={handleDragChange}
+            onAddTask={async (groupId, title) => {
+                await handleProgressBar(true)
+                await handleAddTask(groupId, title, () => handleProgressBar(true))
+            }}
         >
             {children}
         </Group>)
@@ -126,15 +139,19 @@ function Board(props) {
         <DndProvider backend={HTML5Backend}>
             <div className={classes.root}>
                 {renderBoardHeader()}
-                <div className='board-canvas'>
-                    <div id='board'>
-                        {data.groups.map((group, index) => {
-                            var tasks = group.tasks.map((task, t_index) => {
-                                return renderTask({ ...task, groupId: group.id }, t_index)
-                            })
-                            return renderTaskGroup(group, index, tasks)
-                        })}
-                    </div>
+                <div className='board'>
+                    {data.groups.map((group, index) => {
+                        var tasks = group.tasks.map((task, t_index) => {
+                            return renderTask({ ...task, groupId: group.id }, t_index)
+                        })
+                        return renderTaskGroup(group, index, tasks)
+                    })}
+                    <TextInput 
+                        variant='horizontal'
+                        holderText='+ Add another group' 
+                        inputPlaceHolderText='Enter group title...'
+                        onAdd={(title) => handleAddGroup(id, title)}
+                    />
                 </div>
                 <TaskDialog open={taskDialog.open} id={taskDialog.id} onClose={handleTaskDialogClose} />
             </div >
@@ -157,8 +174,10 @@ const mapDispatchToProps = dispatch => {
         moveTask: Thunk.moveTask,
         handleOnSort: Thunk.handleOnSort,
         handleSortTask: Thunk.handleSortTask,
+        handleAddTask: Thunk.addTask,
+        handleAddGroup: Thunk.addGroup,
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Board)
+export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(Board))
 
