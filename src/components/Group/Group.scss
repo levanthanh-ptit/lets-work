@@ -17,16 +17,19 @@
     padding: 0.4rem;
     box-sizing: border-box;
     display: block;
-    .title {
-      display: block;
+    >.title {
+      display: flex;
       padding-bottom: 0.2rem;
       font-size: 1rem;
       font-weight: 500;
       text-overflow: ellipsis;
       text-align: center;
       margin-right: 0.3rem;
+      .text{
+        flex: 1;
+      }
     }
-    .content {
+    >.content {
       display: block;
       >div{
         margin-top: 0.4rem;

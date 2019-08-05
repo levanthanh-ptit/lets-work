@@ -4,61 +4,58 @@ import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import * as color from '../../../components/assets/color';
-import './Board.scss'
+import './Board.scss';
+import axios from '../../../axios/axios'
+import { useStyle } from './BoardStyle'
+import { Toolbar, AppBar, Menu, MenuItem, Typography, Avatar } from '@material-ui/core';
+import { DeleteForever as IconDeleteForever } from '@material-ui/icons'
 
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
-import Fade from '@material-ui/core/Fade';
-
-import * as Thunk from '../../../redux/thunk/ProjectThunk'
+import * as ProjectThunk from '../../../redux/thunk/ProjectThunk'
 import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
 import TaskDialog from './TaskDialog';
 import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar';
 import TextInput from '../../../components/TextInput/TextInput'
+import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
+import BoardHeader from './BoardHeader'
 
-const useStyle = makeStyles(theme => ({
-
-    root: {
-        flexGrow: 1,
-        boxSizing: 'border-box',
-        // marginTop: theme.spacing(6),
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    subBar: {
-        background: color.color_bg_black40,
-        boxShadow: 'none'
-    },
-    columnWrap: {
-        display: 'inline-block',
-    },
-    column: {
-        backgroundColor: color.color_bg_white90,
-        height: theme.spacing(20),
-        width: theme.spacing(30),
-        borderRadius: theme.spacing(1),
-    }
-}))
 
 function Board(props) {
     const classes = useStyle();
-    const { id, boardName, data,
-        load,
-        moveTask,
-        handleOnSort,
-        handleSortTask,
-        handleAddTask,
-        handleAddGroup,
-        handleProgressBar } = props;
+    const { data, auth, load, moveTask, handleOnSort, handleSortTask, handleAddTask,
+        handleDeleteTask, handleUpdateTask, handleAddGroup, handleDeleteGroup, handleProgressBar
+    } = props;
+    const id = props.match.params.boardId;
+
+    const [state, setState] = useState({
+        name: null,
+        description: null,
+        id: null,
+        error: ""
+    })
 
     const [taskDialog, setTaskDialog] = useState({
         open: false,
-        id: null
+        id: null,
+        groupId: null,
+        title: null,
+        description: null,
+        estimateTime: null,
+        spendTime: null
     })
-   
+
+    const [anchorGroupMenu, setAnchorGroupMenu] = useState({
+        anchor: null,
+        groupId: null,
+        title: ''
+    })
+
+    const [confirmDelete, setConfirmDelete] = useState({
+        open: false,
+        title: '',
+        action: null,
+    })
+
     const [dragUp, setDragUp] = useState({
         groupId: 0,
         taskId: 0
@@ -66,41 +63,27 @@ function Board(props) {
 
     useEffect(() => {
         load(id);
-    },[id, load])
+        if (id) axios.get(`/project/${id}`)
+            .then(res => {
+                setState({ ...res.data })
+            }).catch(error => {
+                setState({ error: error.response.message })
+            })
+    }, [id])
 
     const handleDragChange = (groupId, taskId) => {
         setDragUp({ groupId, taskId })
     }
 
-    const handleTaskDialogOpen = (id) => {
+    const handleTaskDialog = (open, task) => {
         setTaskDialog({
-            open: true,
-            id
+            open,
+            ...task
         })
     }
 
-    const handleTaskDialogClose = () => {
-        setTaskDialog({
-            open: false,
-            id: null,
-        })
-    }
-
-    const renderBoardHeader = () => (
-        <Fade in timeout={1000}>
-            <AppBar
-                className={classes.subBar}
-                position='static'
-            >
-                <Toolbar variant="regular">
-                    {boardName}
-                </Toolbar>
-            </AppBar>
-        </Fade>
-    )
-
-    const renderTaskGroup = (taskGroup, index, children) => {
-        const { id, title, } = taskGroup;
+    const renderGroup = (taskGroup, index, children) => {
+        const { id, title } = taskGroup;
         return (<Group id={id}
             key={id}
             index={index}
@@ -110,15 +93,32 @@ function Board(props) {
             onDrapChange={handleDragChange}
             onAddTask={async (groupId, title) => {
                 await handleProgressBar(true)
-                await handleAddTask(groupId, title, () => handleProgressBar(true))
+                await handleAddTask(groupId, title, () => handleProgressBar(false))
             }}
+            onMenuClick={(e, id) => setAnchorGroupMenu({
+                anchor: e.currentTarget,
+                groupId: id,
+                title
+            })}
         >
             {children}
         </Group>)
     }
 
+    const renderGroupAdder = () => (
+        <TextInput
+            variant='horizontal'
+            holderText='+ Add another group'
+            inputPlaceHolderText='Enter group title...'
+            onAdd={async (title) => {
+                await handleProgressBar(true);
+                await handleAddGroup(id, title, () => handleProgressBar(false));
+            }}
+        />
+    )
+
     const renderTask = (task, index) => {
-        const { id, title, description, groupId } = task;
+        const { id, title, description, estimateTime, spendTime, groupId } = task;
         var dragUpState = false;
         if (dragUp.groupId === groupId && dragUp.taskId === id) dragUpState = true;
         return (<Task id={id}
@@ -129,31 +129,74 @@ function Board(props) {
             onTaskShouldDrop={handleSortTask}
             onDragChange={handleDragChange}
             dragUp={dragUpState}
-            onTaskOpen={handleTaskDialogOpen}
+            onTaskOpen={() => handleTaskDialog(true, { id, groupId, title, description, estimateTime, spendTime })}
         >
             {description}
         </Task>)
     }
 
+    const renderGroupMenu = () => (
+        <Menu
+            id={anchorGroupMenu.groupId}
+            open={Boolean(anchorGroupMenu.anchor)}
+            anchorEl={anchorGroupMenu.anchor}
+            onClose={() => setAnchorGroupMenu({ anchor: null, groupId: null })}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center', }}
+            transformOrigin={{ vertical: 'top', horizontal: 'center', }}
+        >
+            <MenuItem
+                onClick={() => {
+                    setConfirmDelete({
+                        open: true,
+                        title: anchorGroupMenu.title,
+                        action: () => handleDeleteGroup(anchorGroupMenu.groupId)
+                    })
+                    setAnchorGroupMenu({ anchor: null, groupId: null })
+                }}
+                style={{ color: 'red' }}
+            >
+                <IconDeleteForever style={{ color: 'red' }} className={classes.icon} />
+                Delete
+            </MenuItem>
+        </Menu>
+    )
+
+    const renderDeleteGroupConfirmBox = () => (
+        <ConfirmBox
+            open={confirmDelete.open}
+            title='Delete confirm'
+            message={`Do you want to delete ${confirmDelete.title}`}
+            variant='delete'
+            onClose={() => setConfirmDelete({ open: false })}
+            actionLabel='delete'
+            action={confirmDelete.action}
+        />
+    )
+
     return (
         <DndProvider backend={HTML5Backend}>
             <div className={classes.root}>
-                {renderBoardHeader()}
+                <BoardHeader name={state.name} members={data.members} />
                 <div className='board'>
                     {data.groups.map((group, index) => {
                         var tasks = group.tasks.map((task, t_index) => {
                             return renderTask({ ...task, groupId: group.id }, t_index)
                         })
-                        return renderTaskGroup(group, index, tasks)
+                        return renderGroup(group, index, tasks)
                     })}
-                    <TextInput 
-                        variant='horizontal'
-                        holderText='+ Add another group' 
-                        inputPlaceHolderText='Enter group title...'
-                        onAdd={(title) => handleAddGroup(id, title)}
-                    />
+                    {renderGroupAdder()}
                 </div>
-                <TaskDialog open={taskDialog.open} id={taskDialog.id} onClose={handleTaskDialogClose} />
+                {renderGroupMenu()}
+                {renderDeleteGroupConfirmBox()}
+                {taskDialog.open &&
+                    <TaskDialog
+                        {...taskDialog}
+                        auth={auth}
+                        onClose={(task) => handleTaskDialog(false)}
+                        members={data.members}
+                        onDelete={() => handleDeleteTask(taskDialog.id, taskDialog.groupId)}
+                        onUpdate={handleUpdateTask}
+                    />}
             </div >
         </DndProvider >
     )
@@ -164,18 +207,22 @@ Board.propTypes = {
     id: PropTypes.number
 }
 
-const mapStateToProps = ({ Project }) => ({
-    data: Project
+const mapStateToProps = ({ Project, Auth }) => ({
+    data: Project,
+    auth: Auth
 });
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        load: Thunk.load,
-        moveTask: Thunk.moveTask,
-        handleOnSort: Thunk.handleOnSort,
-        handleSortTask: Thunk.handleSortTask,
-        handleAddTask: Thunk.addTask,
-        handleAddGroup: Thunk.addGroup,
+        load: ProjectThunk.load,
+        moveTask: ProjectThunk.moveTask,
+        handleOnSort: ProjectThunk.handleOnSort,
+        handleSortTask: ProjectThunk.handleSortTask,
+        handleAddTask: ProjectThunk.addTask,
+        handleDeleteTask: ProjectThunk.deleteTask,
+        handleUpdateTask: ProjectThunk.updateTask,
+        handleAddGroup: ProjectThunk.addGroup,
+        handleDeleteGroup: ProjectThunk.deleteGroup
     }, dispatch)
 }
 

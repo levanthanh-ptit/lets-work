@@ -1,9 +1,10 @@
 import { PROJECT } from '../Types'
 
 const initialState = {
-    status: "load",
-    id: 6,
+    status: null,
+    id: null,
     groups: [],
+    members:[]
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -11,31 +12,29 @@ export default (state = initialState, { type, payload }) => {
         case PROJECT.LOAD_START:
             return {
                 ...state,
-                status: 'load'
+                status: PROJECT.LOAD_START
             }
         case PROJECT.LOAD_SUCCESS:
             return {
                 ...state,
-                status: 'done',
+                status: PROJECT.LOAD_SUCCESS,
                 ...payload
             }
         case PROJECT.LOAD_FAIL:
             return {
                 ...state,
-                status: 'fail'
+                status: PROJECT.LOAD_FAIL
             }
         case PROJECT.UPDATE:
             return {
                 ...state,
-                status: 'done',
+                status: PROJECT.LOAD_SUCCESS,
                 ...payload
             }
         case PROJECT.ADD_TASK: {
             let groups = state.groups;
             let index = groups.findIndex((e) => { return e.id === payload.id });
             groups[index].tasks.push(payload.task)
-            console.log(groups);
-
             return {
                 ...state,
                 groups
@@ -43,7 +42,9 @@ export default (state = initialState, { type, payload }) => {
         }
         case PROJECT.ADD_GROUP: {
             let groups = state.groups;
-            groups.push(payload)
+            console.log(groups);
+            groups.push(payload);
+            console.log(groups);
             return {
                 ...state,
                 groups

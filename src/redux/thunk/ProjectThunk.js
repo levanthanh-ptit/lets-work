@@ -1,5 +1,6 @@
 import * as ProjectAction from '../actions/ProjectAction'
 import axios from '../../axios/axios'
+import _ from 'lodash'
 
 export function load(id) {
     return async (dispatch, getState) => {
@@ -7,7 +8,13 @@ export function load(id) {
         axios.get(
             `/project/${id}/groups`
         ).then(res => {
-            dispatch(ProjectAction.loadSuccess(id, res.data));
+            dispatch(ProjectAction.loadSuccess({ id, groups: res.data }));
+            //then get all member
+            axios.get(
+                `/project/${id}/ownerships`
+            ).then(res => {
+                dispatch(ProjectAction.loadSuccess({ members: res.data }));
+            })
         }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })
@@ -23,7 +30,7 @@ export function handleOnSort(feild, srcId, desId, direct) {
         arr.splice(delIndex, 1);
         let insertIndex = arr.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
         arr.splice(insertIndex, 0, srcElement);
-        dispatch(ProjectAction.update(arr))
+        dispatch(ProjectAction.update({ [feild]: arr }))
     }
 }
 
@@ -61,7 +68,7 @@ export function handleSortTask(groupId, srcId, desId, direct) {
     }
 }
 
-export function addTask(groupId, title, callback){
+export function addTask(groupId, title, callback) {
     return async (dispatch, getState) => {
         dispatch(ProjectAction.loadStart());
         axios.post(
@@ -70,29 +77,100 @@ export function addTask(groupId, title, callback){
                 title
             }
         ).then(res => {
+            callback();
             dispatch(ProjectAction.addTask(groupId, res.data));
             console.log(res.data);
-            callback();
-            
         }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })
     }
 }
-export function addGroup(projectId, title, callback){
+export function deleteTask(taskId, groupId) {
+    return async (dispatch, getState) => {
+        await axios.delete(
+            `/task/${taskId}`,
+            {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            }
+        ).then(res => {
+            let { groups } = getState().Project;
+            let indexG = groups.findIndex(e => {
+                return e.id === groupId
+            })
+            let index = groups[indexG].tasks.findIndex(e => {
+                return e.id === taskId
+            })
+            groups[indexG].tasks.splice(index, 1);
+            dispatch(ProjectAction.update({ groups }));
+
+        }).catch(err => {
+            console.log(err);
+            dispatch(ProjectAction.loadFail())
+        })
+    }
+}
+export function updateTask(groupId, task) {
+    const { id, title, description, estimateTime, spendTime } = task;
     return async (dispatch, getState) => {
         dispatch(ProjectAction.loadStart());
+        let { groups } = await getState().Project;
+        let index = await groups.findIndex(v => { return v.id === groupId });
+        let indexT = await groups[index].tasks.findIndex(v => { return v.id === id });
+        if (!_.isEqual(task, groups[index].tasks[indexT])) {
+            groups[index].tasks[indexT] = task;
+            await axios.patch(
+                `/task/${id}`,
+                {
+                    title, description, estimateTime, spendTime
+                }
+            ).then(res => {
+                dispatch(ProjectAction.update({groups}));
+            }).catch(err => {
+                dispatch(ProjectAction.loadFail())
+            })
+        }
+
+    }
+}
+export function addGroup(projectId, title, callback) {
+    return async (dispatch, getState) => {
         axios.post(
             `/project/${projectId}/add-group`,
             {
                 title
             }
-        ).then(res => { 
-            dispatch(ProjectAction.addGroup(res.data));
+        ).then(res => {
             console.log(res.data);
+            dispatch(ProjectAction.addGroup(res.data));
+            console.log("pass");
             callback();
-            
         }).catch(err => {
+            console.log(err);
+            dispatch(ProjectAction.loadFail())
+        })
+    }
+}
+export function deleteGroup(groupId) {
+    return async (dispatch, getState) => {
+        await axios.delete(
+            `/group/${groupId}`,
+            {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            }
+        ).then(res => {
+            let { groups } = getState().Project;
+            let index = groups.findIndex(e => {
+                return e.id === groupId
+            })
+            groups.splice(index, 1);
+            dispatch(ProjectAction.update({ groups }));
+
+        }).catch(err => {
+            console.log(err);
             dispatch(ProjectAction.loadFail())
         })
     }

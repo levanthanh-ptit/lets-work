@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
 import './Task.scss'
@@ -59,6 +59,7 @@ Task.propTypes = {
     onDragChange: PropTypes.func,
     dragUp: PropTypes.bool,
     onTaskOpen: PropTypes.func,
+    onDeleteTask: PropTypes.func,
 }
 
 export default Task

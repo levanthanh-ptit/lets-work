@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import * as Thunk from '../../redux/thunk/AuthThunk';
 import {AUTH} from '../../redux/Types'
+import withLinnerProgressBar from '../../components/LinnerProgressBar/withLinnerProgressBar'
 
 const useStyles = makeStyles({
     grid: {
@@ -20,11 +21,11 @@ const useStyles = makeStyles({
 });
 
 function AuthPage(props) {
-    const {Auth, login, logout} = props;
+    const {Auth, login, handleProgressBar} = props;
     const classes = useStyles();
     if(Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to="user"/>
     return (
-        <div className = "auth-container">
+        <div className = "auth-container" >
             <Grid
                 className={classes.grid}
                 container
@@ -32,7 +33,10 @@ function AuthPage(props) {
                 alignItems="center"
             >
                 <Grid item>
-                    <AuthForm Auth={Auth} login={login} logout={logout} />
+                    <AuthForm 
+                        error={Auth.error}
+                        login={(u, p) => {login(u, p); handleProgressBar(true)}} 
+                        onSucess={() => handleProgressBar(false)} />
                 </Grid>
             </Grid>
         </div>
@@ -46,7 +50,6 @@ const mapStateToProps = ({ Auth }) => ({
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
         login: Thunk.login,
-        logout: Thunk.logout
     }, dispatch)
 }
-export default connect(mapStateToProps, mapDispatchToProps)(AuthPage)
+export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(AuthPage))

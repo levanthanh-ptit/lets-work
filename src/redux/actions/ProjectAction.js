@@ -3,21 +3,20 @@ import { PROJECT } from '../Types'
 export const loadStart = () => ({
     type: PROJECT.LOAD_START,
 })
-export const loadSuccess = (id, groups) => ({
+export const loadSuccess = (payload) => ({
     type: PROJECT.LOAD_SUCCESS,
     payload: {
-        id,
-        groups: groups
+        ...payload
     }
 })
 export const loadFail = (error) => ({
     type: PROJECT.LOAD_FAIL,
     error
 })
-export const update = (groups) => ({
+export const update = (payload) => ({
     type: PROJECT.UPDATE,
     payload: {
-        groups
+        ...payload
     }
 })
 
@@ -30,6 +29,9 @@ export const addTask = (groupId, payload) => ({
 })
 
 export const addGroup = (payload) => ({
-    type: PROJECT.ADD_TASK,
-    payload
+    type: PROJECT.ADD_GROUP,
+    payload:{
+        ...payload,
+        tasks:[]
+    }
 })

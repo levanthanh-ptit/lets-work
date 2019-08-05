@@ -6,37 +6,33 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import './App.scss';
 import AuthPage from './views/Auth/AuthPage';
 import HomePage from './views/Home/HomePage';
-import * as AuthThunk from './redux/thunk/AuthThunk';
-import { sessionLogin } from './redux/actions/AuthAction'
+import { sessionLogin } from './redux/thunk/AuthThunk'
 
 export function App(props) {
 	const { Auth, sessionLogin } = props;
 
 	useEffect(() => {
-		async function effect() {
-			var token = localStorage.getItem('token');
-			if(token !== null) sessionLogin(token);
-		}
+		sessionLogin();
 	}, [])
 
 	return (
 		<div className="App">
 			<Switch>
-				<Route exact path="/login" component={() => (<AuthPage Auth={Auth} />)} />
-				<Route exact path="/user" component={() => (<HomePage Auth={Auth} />)} />
+				<Route exact path='/login' component={route => (<AuthPage Auth={Auth} {...route}/>)} />
+				<Route path='/home' component={route => (<HomePage Auth={Auth} {...route}/>)} />
 				{
 					Auth.token === null ?
-						<Redirect to="/login" />
+						<Redirect to='/login' />
 						:
-						<Redirect to="/user" />
+						<Redirect to='/home' />
 				}
 			</Switch>
 		</div>
 	)
 }
 
-const mapStateToProps = ({ Auth }) => ({
-	Auth: Auth
+const mapStateToProps = ({ Auth}) => ({
+	Auth,
 });
 
 const mapDispatchToProps = dispatch => {

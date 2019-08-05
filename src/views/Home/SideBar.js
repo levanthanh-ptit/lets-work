@@ -1,19 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles';
-import * as color from '../assets/color'
+import * as color from '../../components/assets/color'
 
-import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Drawer from '@material-ui/core/Drawer';
-import IconPerson from '@material-ui/icons/PersonRounded';
-import IconHome from '@material-ui/icons/HomeRounded';
-import IconChart from '@material-ui/icons/InsertChart';
-
+import {Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Drawer} from '@material-ui/core';
+import {Person as IconPerson, Home as IconHome, InsertChart as IconChart} from '@material-ui/icons';
 import back_img from '../../assets/bg_lake.jpg'
 
 const useStyle = makeStyles( theme => ({
@@ -133,6 +124,7 @@ function SideBar(props) {
 SideBar.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
+    
 }
 
 export default SideBar

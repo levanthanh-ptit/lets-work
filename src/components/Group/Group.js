@@ -5,6 +5,8 @@ import './Group.scss'
 
 import { Types as TaskTypes } from './Task/Task'
 import TextInput from '../TextInput/TextInput'
+import IconButton from '@material-ui/core/IconButton'
+import IconMenu from '@material-ui/icons/MoreVert'
 
 export const Types = {
     GROUP: 'GROUP',
@@ -15,7 +17,8 @@ function Group(props) {
         onGroupShouldDrop,
         onTaskShouldDrop,
         onDrapChange,
-        onAddTask } = props;
+        onAddTask,
+        onMenuClick } = props;
 
     const [, drag] = useDrag({
         item: {
@@ -63,7 +66,8 @@ function Group(props) {
                     className={`TaskGroupContainer`}
                 >
                     <div className='title'>
-                        {title}
+                        <div className="text">{title}</div>
+                        <IconButton size="small" onClick={ e => onMenuClick(e, id)}><IconMenu fontSize="small"/></IconButton>
                     </div>
                     <div className="content">
                         {children}
@@ -90,6 +94,7 @@ Group.propTypes = {
     onTaskShouldDrop: PropTypes.func,
     onDrapChange: PropTypes.func,
     onAddTask: PropTypes.func,
+    onMenuClick: PropTypes.func,
 }
 
 export default Group
