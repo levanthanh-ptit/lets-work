@@ -1,9 +1,12 @@
 import * as ProjectAction from '../actions/ProjectAction'
 import axios from '../../axios/axios'
+import {PROJECT} from '../Types'
 import _ from 'lodash'
 
 export function load(id) {
     return async (dispatch, getState) => {
+        const {Project} = getState();
+        if(Project.status !== null) return
         dispatch(ProjectAction.clean());
         dispatch(ProjectAction.loadStart());
         axios.get(
@@ -39,15 +42,14 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
     return async (dispatch, getState) => {
         try {
             await axios.post(`/task/change-group?id=${taskId}&target_group_id=${targetGroupId}`);
-            const data = getState().Project;
-            let arr = data.groups;
-            let srcGroupIndex = arr.findIndex(group => { return group.id === srcGroupId });
-            let taskIndex = arr[srcGroupIndex].tasks.findIndex(t => { return t.id === taskId });
-            let task = arr[srcGroupIndex].tasks[taskIndex];
-            let targetGroupIndex = arr.findIndex(group => { return group.id === targetGroupId; });
-            arr[srcGroupIndex].tasks.splice(taskIndex, 1);
-            arr[targetGroupIndex].tasks = [...arr[targetGroupIndex].tasks, task];
-            dispatch(ProjectAction.update(arr))
+            var {groups} = getState().Project;
+            let srcGroupIndex = groups.findIndex(group => { return group.id === srcGroupId });
+            let taskIndex = groups[srcGroupIndex].tasks.findIndex(t => { return t.id === taskId });
+            let task = groups[srcGroupIndex].tasks[taskIndex];
+            let targetGroupIndex = groups.findIndex(group => { return group.id === targetGroupId; });
+            groups[srcGroupIndex].tasks.splice(taskIndex, 1);
+            groups[targetGroupIndex].tasks = [...groups[targetGroupIndex].tasks, task];
+            dispatch(ProjectAction.update({groups}))
         } catch (error) {
         }
 
@@ -56,15 +58,14 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
 
 export function handleSortTask(groupId, srcId, desId, direct) {
     return (dispatch, getState) => {
-        const data = getState().Project;
-        let superArr = data.groups;
-        var index = superArr.findIndex(e => { return e.id === groupId });
-        let delIndex = superArr[index].tasks.findIndex(e => { return e.id === srcId });
-        let srcElement = superArr[index].tasks.find(e => { return e.id === srcId });
-        superArr[index].tasks.splice(delIndex, 1);
-        let insertIndex = superArr[index].tasks.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
-        superArr[index].tasks.splice(insertIndex, 0, srcElement);
-        dispatch(ProjectAction.update(superArr))
+        var {groups} = getState().Project;
+        var index = groups.findIndex(e => { return e.id === groupId });
+        let delIndex = groups[index].tasks.findIndex(e => { return e.id === srcId });
+        let srcElement = groups[index].tasks.find(e => { return e.id === srcId });
+        groups[index].tasks.splice(delIndex, 1);
+        let insertIndex = groups[index].tasks.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
+        groups[index].tasks.splice(insertIndex, 0, srcElement);
+        dispatch(ProjectAction.update({groups}))
     }
 }
 

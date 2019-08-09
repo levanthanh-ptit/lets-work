@@ -23,7 +23,7 @@ import BoardHeader from './BoardHeader'
 
 function Board(props) {
     const classes = useStyle();
-    const { data, auth, load, moveTask, handleOnSort, handleSortTask, handleAddTask,
+    const { data, load, moveTask, handleOnSort, handleSortTask, handleAddTask,
         handleAddGroup, handleDeleteGroup, handleProgressBar
     } = props;
 
@@ -71,7 +71,7 @@ function Board(props) {
             }).catch(error => {
                 setState({ error: error.response.message })
             })
-    }, [id])
+    }, [])
 
     const handleDragChange = (groupId, taskId) => {
         setDragUp({ groupId, taskId })

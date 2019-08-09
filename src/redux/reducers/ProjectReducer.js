@@ -35,7 +35,7 @@ export default (state = initialState, { type, payload }) => {
         case PROJECT.UPDATE:
             return {
                 ...state,
-                status: PROJECT.LOAD_SUCCESS,
+                status: PROJECT.UPDATE,
                 ...payload
             }
         case PROJECT.ADD_TASK: {

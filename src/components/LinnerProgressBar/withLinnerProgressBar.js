@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 const withLinnerProgressBar = Component => {
-    return function NewComponent(props) {
+    return function WithProgressBarComponent(props) {
         const classes = useStyles();
         const [state, setState] = useState({
             load : false

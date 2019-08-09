@@ -57,8 +57,8 @@ function TaskDialog(props) {
     useEffect(() => {
         function effect() {
             axios.get(`/task/${id}/assignment`)
-                .then(async res => {
-                    await setState({
+                .then( res => {
+                    setState({
                         ...state,
                         assignee: res.data
                     })
