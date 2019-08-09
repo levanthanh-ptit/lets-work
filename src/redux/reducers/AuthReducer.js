@@ -1,10 +1,17 @@
 import { AUTH } from '../Types';
 
 const initialState = {
-    userId: null,
-    token: null,
+    id: null,
+    userName: '',
+    firstName: '',
+    lastName: '',
+    email: null,
+    company: null,
+    bio: null,
+    country: null,
     status: null,
     error: "",
+    token: null
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -19,6 +26,8 @@ export default (state = initialState, { type, payload }) => {
         case AUTH.LOGOUT:
             return { ...state, ...payload, status: null }
         case AUTH.SESSION_LOGIN:
+            return { ...state, ...payload, status: AUTH.LOGIN_SUCCESS }
+        case AUTH.UPDATE:
             return { ...state, ...payload, status: AUTH.LOGIN_SUCCESS }
         default:
             return state

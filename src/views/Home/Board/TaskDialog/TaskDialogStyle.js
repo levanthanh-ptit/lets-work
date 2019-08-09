@@ -1,4 +1,4 @@
-import * as color from '../../../components/assets/color';
+import * as color from '../../../../components/assets/color';
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles(theme => ({

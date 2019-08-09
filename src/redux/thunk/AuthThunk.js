@@ -4,6 +4,7 @@ import axios from '../../axios/axios'
 export function login(username, password) {
     return async dispatch => {
         await dispatch(Auth.loginStart());
+        var id, token;
         axios.post(
             "/auth/login",
             {
@@ -11,17 +12,26 @@ export function login(username, password) {
                 password: password
             }
         ).then(res => {
-            console.log(res);
-            localStorage.setItem('userId', res.data.id);
-            localStorage.setItem('token', res.data.token);
-            dispatch(Auth.loginSuccess({ id: res.data.id, token: res.data.token }));
+            id = res.data.id;
+            token = res.data.token;
+            localStorage.setItem('userId', id);
+            localStorage.setItem('token', token);
+        }).then(() => {
+            axios.get(
+                `/user/${id}`
+            ).then(res => {
+                dispatch(Auth.loginSuccess({ token, ...res.data }));
+            }).catch(error => {
+                if (error.response !== null) {
+                    dispatch(Auth.loginFail(error.response.data.message))
+                }
+            })
         }).catch(error => {
-            if (error.response !== null) {
-                dispatch(Auth.loginFail(error.response.data.message))
+            if (error.response !== undefined) {
+                if (error.response.data !== undefined)
+                    dispatch(Auth.loginFail(error.response.data.message))
             }
-
         })
-
     }
 }
 export function sessionLogin() {
@@ -29,16 +39,15 @@ export function sessionLogin() {
         await dispatch(Auth.loginStart());
         var token = localStorage.getItem('token');
         var userId = localStorage.getItem('userId');
-        console.log(token);
-        console.log(userId);
         axios.get(
             `/user/${userId}`
         ).then(res => {
             dispatch(Auth.loginSuccess({ token, ...res.data }));
         }).catch(error => {
-            if (error.response !== null) {
-                dispatch(Auth.loginFail(error.response.data.message))
-            }
+            if (error.response !== undefined)
+                if (error.response.data !== undefined) {
+                    dispatch(Auth.loginFail(error.response.data.message))
+                }
         })
 
     }
@@ -46,5 +55,15 @@ export function sessionLogin() {
 export function logout() {
     return async dispatch => {
         await dispatch(Auth.logout());
+    }
+}
+export function uploadProfile(id, data) {
+    return async dispatch => {
+        axios.patch(`/user/${id}`, data)
+            .then(res => {
+                dispatch(Auth.update(data))
+            }).catch(err => {
+                dispatch(Auth.loginFail(''))
+            })
     }
 }

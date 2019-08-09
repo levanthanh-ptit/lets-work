@@ -4,7 +4,7 @@ const initialState = {
     status: null,
     id: null,
     groups: [],
-    members:[]
+    members: []
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -13,6 +13,13 @@ export default (state = initialState, { type, payload }) => {
             return {
                 ...state,
                 status: PROJECT.LOAD_START
+            }
+        case PROJECT.CLEAN:
+            return {
+                status: PROJECT.CLEAN,
+                id: null,
+                groups: [],
+                members: []
             }
         case PROJECT.LOAD_SUCCESS:
             return {
@@ -42,12 +49,16 @@ export default (state = initialState, { type, payload }) => {
         }
         case PROJECT.ADD_GROUP: {
             let groups = state.groups;
-            console.log(groups);
             groups.push(payload);
-            console.log(groups);
             return {
                 ...state,
                 groups
+            }
+        }
+        case PROJECT.ADD_USER: {
+            return {
+                ...state,
+                members: [...state.members, payload]
             }
         }
         default:

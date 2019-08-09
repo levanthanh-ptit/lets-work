@@ -67,7 +67,9 @@ function Group(props) {
                 >
                     <div className='title'>
                         <div className="text">{title}</div>
-                        <IconButton size="small" onClick={ e => onMenuClick(e, id)}><IconMenu fontSize="small"/></IconButton>
+                        <IconButton size="small" onClick={ e => onMenuClick(e, id)}>
+                            <IconMenu fontSize="small"/>
+                        </IconButton>
                     </div>
                     <div className="content">
                         {children}

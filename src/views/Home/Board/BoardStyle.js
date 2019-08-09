@@ -8,13 +8,6 @@ export const useStyle = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
     },
-    title: {
-        flex: 1
-    },
-    subBar: {
-        background: color.color_bg_black40,
-        boxShadow: 'none'
-    },
     columnWrap: {
         display: 'inline-block',
     },

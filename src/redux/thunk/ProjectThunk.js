@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 export function load(id) {
     return async (dispatch, getState) => {
+        dispatch(ProjectAction.clean());
         dispatch(ProjectAction.loadStart());
         axios.get(
             `/project/${id}/groups`
@@ -48,7 +49,6 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
             arr[targetGroupIndex].tasks = [...arr[targetGroupIndex].tasks, task];
             dispatch(ProjectAction.update(arr))
         } catch (error) {
-            console.log(error);
         }
 
     }
@@ -79,7 +79,6 @@ export function addTask(groupId, title, callback) {
         ).then(res => {
             callback();
             dispatch(ProjectAction.addTask(groupId, res.data));
-            console.log(res.data);
         }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })
@@ -106,7 +105,6 @@ export function deleteTask(taskId, groupId) {
             dispatch(ProjectAction.update({ groups }));
 
         }).catch(err => {
-            console.log(err);
             dispatch(ProjectAction.loadFail())
         })
     }
@@ -142,12 +140,9 @@ export function addGroup(projectId, title, callback) {
                 title
             }
         ).then(res => {
-            console.log(res.data);
             dispatch(ProjectAction.addGroup(res.data));
-            console.log("pass");
             callback();
         }).catch(err => {
-            console.log(err);
             dispatch(ProjectAction.loadFail())
         })
     }
@@ -170,7 +165,19 @@ export function deleteGroup(groupId) {
             dispatch(ProjectAction.update({ groups }));
 
         }).catch(err => {
-            console.log(err);
+            dispatch(ProjectAction.loadFail())
+        })
+    }
+}
+export function addMember(userId, fullName) {
+    return async (dispatch, getState) => {
+        let {Project} = getState();
+        await axios.post(
+            `/project/${Project.id}/add-user?user_id=${userId}&role=dev`,
+        ).then(res => {
+            dispatch(ProjectAction.addMember({ id: userId, fullName, ownership: 'dev' }));
+
+        }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })
     }

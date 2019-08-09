@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 function AuthPage(props) {
     const {Auth, login, handleProgressBar} = props;
     const classes = useStyles();
-    if(Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to="user"/>
+    if(Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to='/'/>
     return (
         <div className = "auth-container" >
             <Grid

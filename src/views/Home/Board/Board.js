@@ -4,6 +4,7 @@ import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {Redirect} from 'react-router-dom'
 import './Board.scss';
 import axios from '../../../axios/axios'
 import { useStyle } from './BoardStyle'
@@ -13,7 +14,7 @@ import { DeleteForever as IconDeleteForever } from '@material-ui/icons'
 import * as ProjectThunk from '../../../redux/thunk/ProjectThunk'
 import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
-import TaskDialog from './TaskDialog';
+import TaskDialog from './TaskDialog/TaskDialog';
 import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar';
 import TextInput from '../../../components/TextInput/TextInput'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
@@ -23,8 +24,9 @@ import BoardHeader from './BoardHeader'
 function Board(props) {
     const classes = useStyle();
     const { data, auth, load, moveTask, handleOnSort, handleSortTask, handleAddTask,
-        handleDeleteTask, handleUpdateTask, handleAddGroup, handleDeleteGroup, handleProgressBar
+        handleAddGroup, handleDeleteGroup, handleProgressBar
     } = props;
+
     const id = props.match.params.boardId;
 
     const [state, setState] = useState({
@@ -81,7 +83,7 @@ function Board(props) {
             ...task
         })
     }
-
+    
     const renderGroup = (taskGroup, index, children) => {
         const { id, title } = taskGroup;
         return (<Group id={id}
@@ -191,11 +193,9 @@ function Board(props) {
                 {taskDialog.open &&
                     <TaskDialog
                         {...taskDialog}
-                        auth={auth}
-                        onClose={(task) => handleTaskDialog(false)}
+                        onClose={() => handleTaskDialog(false)}
                         members={data.members}
-                        onDelete={() => handleDeleteTask(taskDialog.id, taskDialog.groupId)}
-                        onUpdate={handleUpdateTask}
+                        handleProgressBar={handleProgressBar}
                     />}
             </div >
         </DndProvider >

@@ -19,12 +19,12 @@ export function App(props) {
 		<div className="App">
 			<Switch>
 				<Route exact path='/login' component={route => (<AuthPage Auth={Auth} {...route}/>)} />
-				<Route path='/home' component={route => (<HomePage Auth={Auth} {...route}/>)} />
+				<Route path='/home' component={route => (<HomePage {...route}/>)} />
 				{
 					Auth.token === null ?
 						<Redirect to='/login' />
 						:
-						<Redirect to='/home' />
+						<Redirect to='/home'/>
 				}
 			</Switch>
 		</div>

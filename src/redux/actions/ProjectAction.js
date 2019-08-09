@@ -3,6 +3,9 @@ import { PROJECT } from '../Types'
 export const loadStart = () => ({
     type: PROJECT.LOAD_START,
 })
+export const clean = () => ({
+    type: PROJECT.CLEAN,
+})
 export const loadSuccess = (payload) => ({
     type: PROJECT.LOAD_SUCCESS,
     payload: {
@@ -34,4 +37,9 @@ export const addGroup = (payload) => ({
         ...payload,
         tasks:[]
     }
+})
+
+export const addMember = (payload) => ({
+    type: PROJECT.ADD_USER,
+    payload
 })

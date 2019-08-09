@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 import { makeStyles } from '@material-ui/core/styles';
-import * as color from '../../components/assets/color'
+import * as color from '../../components/assets/color';
+import {Link} from 'react-router-dom'
 
-import {Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Drawer} from '@material-ui/core';
-import {Person as IconPerson, Home as IconHome, InsertChart as IconChart} from '@material-ui/icons';
+import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Drawer } from '@material-ui/core';
+import { Person as IconPerson, Home as IconHome } from '@material-ui/icons';
 import back_img from '../../assets/bg_lake.jpg'
 
-const useStyle = makeStyles( theme => ({
+const useStyle = makeStyles(theme => ({
     drawerContainer: {
         "& .MuiPaper-root": {
             // background: color.color_bg_black90,
@@ -31,10 +33,10 @@ const useStyle = makeStyles( theme => ({
     },
     listItem: {
         '&:hover': {
-            backgroundColor: color.color_bg_white30,
+            backgroundColor: color.color_bg_white40,
         },
         '&.MuiListItem-root.Mui-selected': {
-            backgroundColor: color.color_bg_white30,
+            backgroundColor: color.color_bg_white40,
         },
     },
     icon: {
@@ -49,9 +51,13 @@ const useStyle = makeStyles( theme => ({
     }
 }))
 
+const AdapterLink = React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />);
+
 function SideBar(props) {
     const classes = useStyle();
-    const { onClose, ...other } = props;
+    const { onClose, data, location, ...other } = props;
+    const partName = location.pathname;
+    
     return (
         <Drawer
             className={classes.drawerContainer}
@@ -65,55 +71,50 @@ function SideBar(props) {
                     className={classes.avatar}
                     alt="avatar"
                 >
-                    L
+                    {data.firstName[0]}
                 </Avatar>
                 <List>
                     <Divider className={classes.divider} />
                     {/* Home page */}
-                    <ListItem
+                    <ListItem 
                         button
-                        selected
+                        selected={_.startsWith(partName,'/home/board')}
                         className={classes.listItem}
+                        component={(!_.startsWith(partName,'/home/board'))?AdapterLink:null}
+                        to='/home/boards'
+                        onClick={e => {
+                            if(_.startsWith(partName,'/home/board')) return
+                            onClose()
+                        }}
                     >
                         <ListItemIcon>
-                            <IconHome
-                                className={classes.icon}
-                            />
+                            <IconHome className={classes.icon} />
                         </ListItemIcon>
                         <ListItemText className={classes.text}>
                             Dashboard
-                    </ListItemText>
+                        </ListItemText>
                     </ListItem>
                     <Divider className={classes.divider} />
                     {/* Profile page */}
-                    <ListItem
+                    <ListItem 
                         button
+                        selected={_.startsWith(partName,'/home/profile')}
                         className={classes.listItem}
+                        component={(!_.startsWith(partName,'/home/profile'))?AdapterLink:null}
+                        to='/home/profile'
+                        onClick={e => {
+                            if(_.startsWith(partName,'/home/profile')) return
+                            onClose()
+                        }}
                     >
                         <ListItemIcon>
-                            <IconPerson
-                                className={classes.icon}
-                            />
+                            <IconPerson className={classes.icon} />
                         </ListItemIcon>
                         <ListItemText className={classes.text}>
                             Profile
-                    </ListItemText>
+                        </ListItemText>
                     </ListItem>
                     <Divider className={classes.divider} />
-                    {/* insight page */}
-                    <ListItem
-                        button
-                        className={classes.listItem}
-                    >
-                        <ListItemIcon>
-                            <IconChart
-                                className={classes.icon}
-                            />
-                        </ListItemIcon>
-                        <ListItemText className={classes.text}>
-                            Insight
-                    </ListItemText>
-                    </ListItem>
                 </List>
             </div>
 
@@ -124,7 +125,8 @@ function SideBar(props) {
 SideBar.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    
+    data: PropTypes.object,
+    location: PropTypes.object
 }
 
 export default SideBar

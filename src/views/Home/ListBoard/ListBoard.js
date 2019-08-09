@@ -63,7 +63,7 @@ function ListBoard(props) {
         })
     }
 
-    const renderBoard = (project) => (
+    const renderProject = (project) => (
         <Link
             className='board-detail'
             id={project.id}
@@ -88,7 +88,7 @@ function ListBoard(props) {
     return (
         <div className={classes.root}>
             <div className='list-board'>
-                {listBoard.map(e => renderBoard(e))}
+                {listBoard.map(e => renderProject(e))}
                 <TextInput
                     holderText='Create new project'
                     variant='horizontal'
