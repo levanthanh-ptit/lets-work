@@ -281,7 +281,6 @@ function TaskDialog(props) {
                 renderNegativeList={true}
                 onItemClick={({id}) => {
                     setRemoveMemberMenu({ ...removeMemberMenu, open: false })
-                    alert(id)
                 }}
             />
         </>

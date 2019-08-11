@@ -24,7 +24,7 @@ export default (state = initialState, { type, payload }) => {
         case AUTH.LOGIN_FAIL:
             return { ...state, ...payload, status: type }
         case AUTH.LOGOUT:
-            return { ...state, ...payload, status: null }
+            return { ...initialState}
         case AUTH.SESSION_LOGIN:
             return { ...state, ...payload, status: AUTH.LOGIN_SUCCESS }
         case AUTH.UPDATE:

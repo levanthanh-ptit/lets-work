@@ -6,7 +6,7 @@ import _ from 'lodash'
 export function load(id) {
     return async (dispatch, getState) => {
         const {Project} = getState();
-        if(Project.status !== null) return
+        if(Project.status === id) return
         dispatch(ProjectAction.clean());
         dispatch(ProjectAction.loadStart());
         axios.get(
@@ -25,16 +25,16 @@ export function load(id) {
     }
 }
 
-export function handleOnSort(feild, srcId, desId, direct) {
+export function SortGroups(srcId, desId, direct) {
     return (dispatch, getState) => {
         const data = getState().Project;
-        var arr = data[feild];
-        let delIndex = arr.findIndex(e => { return e.id === srcId });
-        let srcElement = arr.find(e => { return e.id === srcId });
-        arr.splice(delIndex, 1);
-        let insertIndex = arr.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
-        arr.splice(insertIndex, 0, srcElement);
-        dispatch(ProjectAction.update({ [feild]: arr }))
+        var groups = data.groups;
+        let delIndex = groups.findIndex(e => { return e.id === srcId });
+        let srcElement = groups.find(e => { return e.id === srcId });
+        groups.splice(delIndex, 1);
+        let insertIndex = groups.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
+        groups.splice(insertIndex, 0, srcElement);
+        dispatch(ProjectAction.update({groups}))
     }
 }
 
@@ -56,7 +56,7 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
     }
 }
 
-export function handleSortTask(groupId, srcId, desId, direct) {
+export function SortTasks(groupId, srcId, desId, direct) {
     return (dispatch, getState) => {
         var {groups} = getState().Project;
         var index = groups.findIndex(e => { return e.id === groupId });

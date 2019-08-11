@@ -4,7 +4,7 @@ export const AUTH = {
     LOGIN_FAIL: 'LOGIN_FAIL',
     LOGOUT: 'LOGOUT',
     SESSION_LOGIN: 'SESSION_LOGIN',
-    UPDATE: "UPDATE",
+    UPDATE: "AUTH_UPDATE",
 }
 
 export const PROJECT = {
@@ -12,7 +12,7 @@ export const PROJECT = {
     CLEAN: "CLEAN",
     LOAD_SUCCESS: "LOAD_SUCCESS",
     LOAD_FAIL: "LOAD_FAIL",
-    UPDATE: "UPDATE",
+    UPDATE: "PROJECT_UPDATE",
     ADD_TASK: 'ADD_TASK',
     ADD_GROUP: 'ADD_GROUP',
     ADD_USER: 'ADD_USER',

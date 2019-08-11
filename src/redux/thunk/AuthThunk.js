@@ -54,6 +54,7 @@ export function sessionLogin() {
 }
 export function logout() {
     return async dispatch => {
+        localStorage.clear()
         await dispatch(Auth.logout());
     }
 }

@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
+import {Card, CardHeader, CardContent, CardActions, Typography, TextField, Link, Button } from '@material-ui/core';
 
 import * as color from '../assets/color';
 
@@ -44,7 +38,9 @@ const useStyles = makeStyles( theme => ({
 
 }));
 
-function AuthForm(props) {
+const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
+
+function LoginForm(props) {
     const { error, login } = props;
 
     const [state, setState] = useState({
@@ -99,11 +95,9 @@ function AuthForm(props) {
                     <Link
                         className={classes.signUpLink}
                         underline='none'
-                        component='button'
+                        component={AdapterLink}
                         color='primary'
-                        onClick={() => {
-                            alert(props.Auth.token)
-                        }}
+                        to='/auth/signup'
                     >
                         Not have a account? sign up now
                         </Link>
@@ -118,7 +112,7 @@ function AuthForm(props) {
                         variant="text"
                         onClick={() => handleLogin()}
                     >
-                        <Typography color='secondary'>login</Typography>
+                        <Typography color='primary'>login</Typography>
                     </Button>
                 </CardActions>
             </Card>
@@ -126,11 +120,11 @@ function AuthForm(props) {
     )
 }
 
-AuthForm.propTypes = {
+LoginForm.propTypes = {
     error: PropTypes.string,
     login: PropTypes.func,
     onSucess: PropTypes.func
 }
 
-export default AuthForm
+export default LoginForm
 

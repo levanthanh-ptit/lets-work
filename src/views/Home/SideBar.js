@@ -6,17 +6,15 @@ import * as color from '../../components/assets/color';
 import {Link} from 'react-router-dom'
 
 import { Avatar, List, Divider, ListItem, ListItemIcon, ListItemText, Drawer } from '@material-ui/core';
-import { Person as IconPerson, Home as IconHome } from '@material-ui/icons';
-import back_img from '../../assets/bg_lake.jpg'
+import { Person as IconPerson, Home as IconHome, PowerSettingsNew as IconPowerSettingsNew } from '@material-ui/icons';
+import back_img from '../../assets/bg_colorful_city.jpg'
 
 const useStyle = makeStyles(theme => ({
     drawerContainer: {
         "& .MuiPaper-root": {
-            // background: color.color_bg_black90,
             backgroundImage: `url('${back_img}')`,
             backgroundPosition: 'left',
             backgroundSize: 'cover',
-            backgroundBlendMode: 'darken',
         },
 
     },
@@ -46,8 +44,8 @@ const useStyle = makeStyles(theme => ({
         background: color.color_bg_white10,
     },
     text: {
-        color: color.color_bg_white80,
-        textShadow: `1px 1px ${color.color_bg_black30}`,
+        color: color.color_white,
+        textShadow: `1px 1px 5px ${color.color_bg_black90}`,
     }
 }))
 
@@ -55,9 +53,9 @@ const AdapterLink = React.forwardRef((props, ref) => <Link innerRef={ref} {...pr
 
 function SideBar(props) {
     const classes = useStyle();
-    const { onClose, data, location, ...other } = props;
+    const { onClose, data, location, onLogOut, ...other } = props;
     const partName = location.pathname;
-    
+
     return (
         <Drawer
             className={classes.drawerContainer}
@@ -115,6 +113,23 @@ function SideBar(props) {
                         </ListItemText>
                     </ListItem>
                     <Divider className={classes.divider} />
+                    {/* Log out button */}
+                    <ListItem 
+                        button
+                        className={classes.listItem}
+                        onClick={e => {
+                            onLogOut()
+                            onClose()
+                        }}
+                    >
+                        <ListItemIcon >
+                            <IconPowerSettingsNew className={classes.icon} style={{color: 'red'}}/>
+                        </ListItemIcon>
+                        <ListItemText className={classes.text}>
+                            Log out
+                        </ListItemText>
+                    </ListItem>
+                    <Divider className={classes.divider} />
                 </List>
             </div>
 
@@ -126,7 +141,8 @@ SideBar.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     data: PropTypes.object,
-    location: PropTypes.object
+    location: PropTypes.object,
+    onLogOut: PropTypes.func
 }
 
 export default SideBar

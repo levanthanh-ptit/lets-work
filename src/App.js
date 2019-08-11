@@ -18,11 +18,11 @@ export function App(props) {
 	return (
 		<div className="App">
 			<Switch>
-				<Route exact path='/login' component={route => (<AuthPage Auth={Auth} {...route}/>)} />
-				<Route path='/home' component={route => (<HomePage {...route}/>)} />
+				<Route path='/auth' component={AuthPage} />
+				<Route path='/home' component={HomePage} />
 				{
 					Auth.token === null ?
-						<Redirect to='/login' />
+						<Redirect to='/auth/login' />
 						:
 						<Redirect to='/home/boards'/>
 				}

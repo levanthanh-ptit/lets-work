@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {useSelector} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import * as color from '../../../components/assets/color';
 import { Link } from 'react-router-dom'
@@ -32,7 +34,7 @@ const useStyle = makeStyles(theme => ({
 function ListBoard(props) {
     const classes = useStyle();
     const { userId } = props;
-
+    const auth = useSelector(state => state.Auth)
     const [listBoard, setListBoard] = useState([
     ])
 
@@ -85,6 +87,7 @@ function ListBoard(props) {
 
         </Link>
     )
+    if(auth.id === null ) return <Redirect to='/' />
     return (
         <div className={classes.root}>
             <div className='list-board'>

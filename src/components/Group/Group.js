@@ -34,7 +34,7 @@ function Group(props) {
             if (item.type === Types.GROUP) {
                 if (item.index === props.index)
                     return
-                onGroupShouldDrop('groups', item.id, id, index > item.index);
+                onGroupShouldDrop(item.id, id, index > item.index);
                 monitor.getItem().index = index;
             }
         },

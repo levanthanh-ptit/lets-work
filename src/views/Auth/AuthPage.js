@@ -2,14 +2,15 @@ import React from 'react';
 import "./AuthPage.scss"
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {Redirect} from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
-import AuthForm from '../../components/AuthForm/AuthForm';
+import LoginForm from '../../components/LoginForm/LoginForm';
+import SignUpForm from '../../components/SignUpForm/SignUpForm';
 import * as Thunk from '../../redux/thunk/AuthThunk';
-import {AUTH} from '../../redux/Types'
+import { AUTH } from '../../redux/Types'
 import withLinnerProgressBar from '../../components/LinnerProgressBar/withLinnerProgressBar'
 
 const useStyles = makeStyles({
@@ -21,11 +22,11 @@ const useStyles = makeStyles({
 });
 
 function AuthPage(props) {
-    const {Auth, login, handleProgressBar} = props;
+    const { Auth, login, handleProgressBar } = props;
     const classes = useStyles();
-    if(Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to='/'/>
+    if (Auth.status === AUTH.LOGIN_SUCCESS) return <Redirect to='/' />
     return (
-        <div className = "auth-container" >
+        <div className="auth-container" >
             <Grid
                 className={classes.grid}
                 container
@@ -33,10 +34,25 @@ function AuthPage(props) {
                 alignItems="center"
             >
                 <Grid item>
-                    <AuthForm 
-                        error={Auth.error}
-                        login={(u, p) => {login(u, p); handleProgressBar(true)}} 
-                        onSucess={() => handleProgressBar(false)} />
+                    <Switch>
+                        <Route path='/auth/login'
+                            component={r =>
+                                <LoginForm
+                                    error={Auth.error}
+                                    login={(u, p) => { login(u, p); handleProgressBar(true) }}
+                                    onSucess={() => handleProgressBar(false)}
+                                />}
+                        />
+                        <Route path='/auth/signup'
+                            component={r =>
+                                <SignUpForm
+                                    error={Auth.error}
+                                    login={(u, p) => { login(u, p); handleProgressBar(true) }}
+                                    onSucess={() => handleProgressBar(false)}
+                                />}
+                        />
+                    </Switch>
+
                 </Grid>
             </Grid>
         </div>

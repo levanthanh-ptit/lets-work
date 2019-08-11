@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {Redirect} from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import './Board.scss';
 import axios from '../../../axios/axios'
 import { useStyle } from './BoardStyle'
-import { Toolbar, AppBar, Menu, MenuItem, Typography, Avatar } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import { DeleteForever as IconDeleteForever } from '@material-ui/icons'
 
 import * as ProjectThunk from '../../../redux/thunk/ProjectThunk'
@@ -23,10 +23,11 @@ import BoardHeader from './BoardHeader'
 
 function Board(props) {
     const classes = useStyle();
-    const { data, load, moveTask, handleOnSort, handleSortTask, handleAddTask,
+    const { load, moveTask, handleOnSortGroups, handleSortTask, handleAddTask,
         handleAddGroup, handleDeleteGroup, handleProgressBar
     } = props;
-
+    const data = useSelector(state => state.Project)
+    const auth = useSelector(state => state.Auth)
     const id = props.match.params.boardId;
 
     const [state, setState] = useState({
@@ -64,13 +65,15 @@ function Board(props) {
     })
 
     useEffect(() => {
-        load(id);
-        if (id) axios.get(`/project/${id}`)
-            .then(res => {
-                setState({ ...res.data })
-            }).catch(error => {
-                setState({ error: error.response.message })
-            })
+        if (id) {
+            load(id);
+            axios.get(`/project/${id}`)
+                .then(res => {
+                    setState({ ...res.data })
+                }).catch(error => {
+                    setState({ error: error.response.message })
+                })
+        }
     }, [])
 
     const handleDragChange = (groupId, taskId) => {
@@ -83,14 +86,14 @@ function Board(props) {
             ...task
         })
     }
-    
+
     const renderGroup = (taskGroup, index, children) => {
         const { id, title } = taskGroup;
         return (<Group id={id}
             key={id}
             index={index}
             title={title}
-            onGroupShouldDrop={handleOnSort}
+            onGroupShouldDrop={handleOnSortGroups}
             onTaskShouldDrop={moveTask}
             onDrapChange={handleDragChange}
             onAddTask={async (groupId, title) => {
@@ -175,6 +178,8 @@ function Board(props) {
         />
     )
 
+    if (auth.id === null) return <Redirect to='/' />
+
     return (
         <DndProvider backend={HTML5Backend}>
             <div className={classes.root}>
@@ -207,17 +212,12 @@ Board.propTypes = {
     id: PropTypes.number
 }
 
-const mapStateToProps = ({ Project, Auth }) => ({
-    data: Project,
-    auth: Auth
-});
-
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
         load: ProjectThunk.load,
         moveTask: ProjectThunk.moveTask,
-        handleOnSort: ProjectThunk.handleOnSort,
-        handleSortTask: ProjectThunk.handleSortTask,
+        handleOnSortGroups: ProjectThunk.SortGroups,
+        handleSortTask: ProjectThunk.SortTasks,
         handleAddTask: ProjectThunk.addTask,
         handleDeleteTask: ProjectThunk.deleteTask,
         handleUpdateTask: ProjectThunk.updateTask,
@@ -226,5 +226,5 @@ const mapDispatchToProps = dispatch => {
     }, dispatch)
 }
 
-export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(Board))
+export default withLinnerProgressBar(connect(null, mapDispatchToProps)(Board))
 

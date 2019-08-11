@@ -35,13 +35,13 @@ const useStyles = makeStyles(theme => ({
 
     },
     title: {
-        color: color.color_bg_white60,
+        color: color.color_bg_white70,
         // fontStyle: 'italic',
         fontWeight: 500,
         cursor: 'pointer',
         textShadow: `1px 2px ${color.color_bg_white20}`,
         "&:hover": {
-            color: color.color_bg_white80,
+            color: color.color_bg_white90,
         }
     },
     breadcrumbs: {

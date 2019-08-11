@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux';
 import './HomePage.scss'
 import { Redirect, Switch, Route } from 'react-router-dom'
 
@@ -8,8 +9,9 @@ import NavBar from './NavBar';
 import Board from "./Board/Board";
 import ListBoard from './ListBoard/ListBoard'
 import Profile from './Profile/Profile'
+import * as AuthThunk from '../../redux/thunk/AuthThunk'
 function HomePage(props) {
-    const {auth, location} = props;
+    const {auth, location, handleLogOut} = props;
     
     const userId = auth.id;
     const [sideBar, setSideBar] = useState({
@@ -31,6 +33,7 @@ function HomePage(props) {
                 onClose={handleOpenSideBar}
                 data={auth}
                 location={location}
+                onLogOut={handleLogOut}
             />
             <Switch>
                 <Route
@@ -45,6 +48,7 @@ function HomePage(props) {
                     path='/home/boards'
                     component={route => (<ListBoard {...route} userId={userId} />)}
                 />
+                {auth.id===null? <Redirect to='/'/>:null}
             </Switch>
         </div>
     )
@@ -55,8 +59,10 @@ const mapStateToProps = ({Auth}) => ({
     auth: Auth
 })
 
-const mapDispatchToProps = {
-    
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        handleLogOut: AuthThunk.logout
+    }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage)
