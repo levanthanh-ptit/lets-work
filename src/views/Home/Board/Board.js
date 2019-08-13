@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
-import { connect, useSelector, useDispatch } from 'react-redux';
+import { connect, useSelector} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom'
 import './Board.scss';
@@ -12,6 +12,7 @@ import { Menu, MenuItem } from '@material-ui/core';
 import { DeleteForever as IconDeleteForever } from '@material-ui/icons'
 
 import * as ProjectThunk from '../../../redux/thunk/ProjectThunk'
+import {PROJECT} from '../../../redux/Types'
 import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
 import TaskDialog from './TaskDialog/TaskDialog';
@@ -19,12 +20,12 @@ import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLin
 import TextInput from '../../../components/TextInput/TextInput'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 import BoardHeader from './BoardHeader'
-
+import MessageDialog from '../../../components/MessageDialog/MessageDialog'
 
 function Board(props) {
     const classes = useStyle();
     const { load, moveTask, handleOnSortGroups, handleSortTask, handleAddTask,
-        handleAddGroup, handleDeleteGroup, handleProgressBar
+        handleAddGroup, handleDeleteGroup, handleClearStatus, handleProgressBar, 
     } = props;
     const data = useSelector(state => state.Project)
     const auth = useSelector(state => state.Auth)
@@ -69,8 +70,10 @@ function Board(props) {
             load(id);
             axios.get(`/project/${id}`)
                 .then(res => {
-                    setState({ ...res.data })
+                    if(res.status === 200)setState({ ...res.data })
                 }).catch(error => {
+                    if(error)
+                    if(error.response)
                     setState({ error: error.response.message })
                 })
         }
@@ -198,10 +201,15 @@ function Board(props) {
                 {taskDialog.open &&
                     <TaskDialog
                         {...taskDialog}
-                        onClose={() => handleTaskDialog(false)}
+                        onClose={() => {handleTaskDialog(false)}}
                         members={data.members}
                         handleProgressBar={handleProgressBar}
                     />}
+                <MessageDialog
+                error
+                title='Load failed'
+                open={data.status === PROJECT.LOAD_FAIL}
+            />
             </div >
         </DndProvider >
     )
@@ -222,7 +230,8 @@ const mapDispatchToProps = dispatch => {
         handleDeleteTask: ProjectThunk.deleteTask,
         handleUpdateTask: ProjectThunk.updateTask,
         handleAddGroup: ProjectThunk.addGroup,
-        handleDeleteGroup: ProjectThunk.deleteGroup
+        handleDeleteGroup: ProjectThunk.deleteGroup,
+        handleClearStatus: ProjectThunk.clearStatus
     }, dispatch)
 }
 

@@ -39,7 +39,8 @@ function BoardHeader(props) {
         anchor: null,
         open: false,
     })
-
+    console.log(members);
+    
     return (
         <>
             <AppBar
@@ -71,7 +72,7 @@ function BoardHeader(props) {
             />
             <PopUpMenu anchorRoot={memberMenu.anchor} open={memberMenu.open}
                 fullList={members} fullListKey='id' displayFeild='fullName'
-                onClose={() => setMemberMenu({anchor: null, open: false})}
+                onClose={() => setMemberMenu({open: false})}
             />
         </>
     )

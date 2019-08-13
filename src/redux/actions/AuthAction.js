@@ -1,4 +1,9 @@
 import {AUTH} from '../Types'
+
+export const clearStatus = () => ({
+    type: AUTH.CLEAR_STATUS
+})
+
 export const loginStart = () => ({
     type: AUTH.LOGIN_START,
 })

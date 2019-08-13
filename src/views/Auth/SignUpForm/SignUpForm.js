@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Link as RouterLink } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Link as RouterLink, Redirect } from 'react-router-dom';
 import _ from 'lodash'
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardHeader, CardContent, CardActions, Typography, TextField, Link, Button } from '@material-ui/core';
 
-import * as color from '../assets/color';
-
+import * as color from '../../../components/assets/color';
+import * as Thunk from '../../../redux/thunk/AuthThunk';
+import { AUTH } from '../../../redux/Types'
+import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar'
+import MessageDialog from '../../../components/MessageDialog/MessageDialog'
 const useStyles = makeStyles(theme => ({
     card: {
         width: theme.spacing(100),
@@ -43,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 function SignUpForm(props) {
-    const { error, signUp } = props;
+    const { auth, signUp, clearStatus } = props;
 
     const [state, setState] = useState({
         hasError: false,
@@ -58,13 +63,12 @@ function SignUpForm(props) {
 
     const handleVerify = async () => {
         let newstate = state;
-        newstate = await _.mapValues(newstate,v => {
+        newstate = await _.mapValues(newstate, v => {
             let i = v;
-            if (v.value === '')
-                {
-                    newstate.hasError = true;
-                    i.error = 'Should not be empty'
-                }
+            if (v.value === '') {
+                newstate.hasError = true;
+                i.error = 'Should not be empty'
+            }
             return i;
         })
         if (newstate.password.value !== newstate.confirmPassword.value) {
@@ -72,7 +76,7 @@ function SignUpForm(props) {
             newstate.confirmPassword.error = 'The two password not match';
         }
         await setState(newstate)
-        if(!state.hasError) {
+        if (!state.hasError) {
             signUp(_.mapValues(state, v => v.value))
         }
     }
@@ -147,7 +151,7 @@ function SignUpForm(props) {
             {...attribute}
         />
     )
-
+    if(auth.status === AUTH.LOGIN_SUCCESS ) return <Redirect to='/' />
     return (
         <React.Fragment>
             <Card className={classes.card}>
@@ -166,9 +170,6 @@ function SignUpForm(props) {
                         flexDirection: 'column'
                     }}
                 >
-                    {error !== null &&
-                        <Typography color="error">{error}</Typography>
-                    }
                     <Link
                         className={classes.signUpLink}
                         underline='none'
@@ -193,6 +194,12 @@ function SignUpForm(props) {
                     </Button>
                 </CardActions>
             </Card>
+            <MessageDialog
+                error
+                title={auth.error}
+                open={auth.status === AUTH.LOGIN_FAIL}
+                onClose={() => clearStatus()}
+            />
         </React.Fragment>
     )
 }
@@ -203,4 +210,14 @@ SignUpForm.propTypes = {
     onSucess: PropTypes.func
 }
 
-export default SignUpForm
+const mapStateToProps = ({ Auth }) => ({
+    auth: Auth
+});
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        signUp: Thunk.signUp,
+        clearStatus: Thunk.clearStatus
+    }, dispatch)
+}
+export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(SignUpForm))

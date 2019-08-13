@@ -8,44 +8,41 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     dialogTitle: {
         background: color.color_bg_white80,
     },
     dialogContent: {
-        minHeight: 50,
-        minWidth: 100,
-        padding: 20,
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: theme.spacing(10),
+        minWidth: theme.spacing(10),
+        padding: theme.spacing(3),
         background: color.color_bg_white80,
-    }
-})
+    },
+}))
 
 function MessageDialog(props) {
-    const { handleClose, error, title, lock, ...other } = props;
+    const { onClose, open, error, title, lock } = props;
     const classes = useStyles();
-    const _handleClose = () => {
-        handleClose(false);
-    }
+
     return (
         <Dialog
-            {...other}
-            onBackdropClick={lock?null:_handleClose}
+            onClose={onClose}
+            open={open}
         >
-            <DialogTitle
-            className={classes.dialogTitle}
-            >
-                <Typography color={error?'error':'primary'} align='center'>{title}</Typography>
-            </DialogTitle>
             <DialogContent
                 className={classes.dialogContent}
             >
+                <Typography color={error ? 'error' : 'primary'} align='center'>{title}</Typography>
                 <Typography align='center'>{props.children}</Typography>
             </DialogContent>
         </Dialog>
     )
 }
 MessageDialog.propTypes = {
-    handleClose: PropTypes.func.isRequired,
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
     error: PropTypes.bool,
     lock: PropTypes.bool,
     title: PropTypes.string,

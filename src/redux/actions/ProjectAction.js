@@ -1,5 +1,9 @@
 import { PROJECT } from '../Types'
 
+export const clearStatus = () => ({
+    type: PROJECT.CLEAR_STATUS
+})
+
 export const loadStart = () => ({
     type: PROJECT.LOAD_START,
 })
@@ -21,6 +25,9 @@ export const update = (payload) => ({
     payload: {
         ...payload
     }
+})
+export const addFail = () => ({
+    type: PROJECT.ADD_FAIL
 })
 
 export const addTask = (groupId, payload) => ({

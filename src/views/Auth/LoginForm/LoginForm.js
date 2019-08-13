@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Link as RouterLink, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import {Card, CardHeader, CardContent, CardActions, Typography, TextField, Link, Button } from '@material-ui/core';
-
-import * as color from '../assets/color';
-
-const useStyles = makeStyles( theme => ({
+import { Card, CardHeader, CardContent, CardActions, Typography, TextField, Link, Button } from '@material-ui/core';
+import * as color from '../../../components/assets/color';
+import * as Thunk from '../../../redux/thunk/AuthThunk';
+import { AUTH } from '../../../redux/Types'
+import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar'
+import MessageDialog from '../../../components/MessageDialog/MessageDialog'
+const useStyles = makeStyles(theme => ({
     card: {
         minWidth: 350,
         boxSizing: "border-box",
@@ -29,10 +32,10 @@ const useStyles = makeStyles( theme => ({
     textField: {
         marginTop: theme.spacing(3),
     },
-    errorText:{
+    errorText: {
         marginBottom: theme.spacing(3)
     },
-    signUpLink:{
+    signUpLink: {
         marginTop: theme.spacing(3)
     }
 
@@ -41,18 +44,21 @@ const useStyles = makeStyles( theme => ({
 const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 function LoginForm(props) {
-    const { error, login } = props;
+    const { auth, clearStatus, login } = props;
 
     const [state, setState] = useState({
-        username: "levanthanh.ptit",
-        password: "thanh12345",
+        username: '',
+        password: '',
     });
     const classes = useStyles();
 
-    function handleLogin() {
+    const handleLogin = () => {
         login(state.username, state.password);
     };
-
+    useEffect(() => {
+        console.log('mount')
+    }, [])
+    if(auth.status === AUTH.LOGIN_SUCCESS ) return <Redirect to='/' />
     return (
         <React.Fragment>
             <Card className={classes.card}>
@@ -89,9 +95,6 @@ function LoginForm(props) {
                             password: e.target.value
                         })}
                     />
-                    {error !== null &&
-                        <Typography color="error">{error}</Typography>
-                    }
                     <Link
                         className={classes.signUpLink}
                         underline='none'
@@ -116,6 +119,12 @@ function LoginForm(props) {
                     </Button>
                 </CardActions>
             </Card>
+            <MessageDialog
+                error
+                title={auth.error}
+                open={auth.status===AUTH.LOGIN_FAIL}
+                onClose={() => clearStatus()}
+            />
         </React.Fragment>
     )
 }
@@ -125,6 +134,15 @@ LoginForm.propTypes = {
     login: PropTypes.func,
     onSucess: PropTypes.func
 }
+const mapStateToProps = ({ Auth }) => ({
+    auth: Auth
+});
 
-export default LoginForm
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        login: Thunk.login,
+        clearStatus: Thunk.clearStatus
+    }, dispatch)
+}
+export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(LoginForm))
 

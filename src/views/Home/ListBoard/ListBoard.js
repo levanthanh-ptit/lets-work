@@ -40,10 +40,10 @@ function ListBoard(props) {
 
     useEffect(() => {
         async function fetchData() {
-            if (userId !== undefined)
+            if (userId)
                 axios.get(`/user/${userId}/projects`)
                     .then(res => {
-                        setListBoard(res.data)
+                        setListBoard([...res.data])
                     }).catch(error => {
 
                     })
@@ -52,6 +52,7 @@ function ListBoard(props) {
     }, [userId])
 
     const handleAddNewProject = (name) => {
+        if (userId)
         axios.post(
             "/project",
             {
@@ -59,7 +60,9 @@ function ListBoard(props) {
                 name
             }
         ).then( res => {
+            if(res.status !== 200) return
             setListBoard([...listBoard, res.data])
+
         }).catch( error =>{
             
         })

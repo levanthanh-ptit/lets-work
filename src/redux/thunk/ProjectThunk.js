@@ -3,6 +3,11 @@ import axios from '../../axios/axios'
 import {PROJECT} from '../Types'
 import _ from 'lodash'
 
+export function clearStatus() {
+    return dispatch => {
+        dispatch(ProjectAction.clearStatus())
+    }
+}
 export function load(id) {
     return async (dispatch, getState) => {
         const {Project} = getState();
@@ -12,13 +17,16 @@ export function load(id) {
         axios.get(
             `/project/${id}/groups`
         ).then(res => {
+            if(res.status !== 200) return
             dispatch(ProjectAction.loadSuccess({ id, groups: res.data }));
-            //then get all member
-            axios.get(
-                `/project/${id}/ownerships`
-            ).then(res => {
-                dispatch(ProjectAction.loadSuccess({ members: res.data }));
-            })
+        }).catch(err => {
+            dispatch(ProjectAction.loadFail())
+        })
+        axios.get(
+            `/project/${id}/ownerships`
+        ).then(res => {
+            if(res.status !== 200) return
+            dispatch(ProjectAction.loadSuccess({ members: res.data }));
         }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })

@@ -9,6 +9,8 @@ const initialState = {
 
 export default (state = initialState, { type, payload }) => {
     switch (type) {
+        case PROJECT.CLEAR_STATUS:
+            return { ...state, status: null}
         case PROJECT.LOAD_START:
             return {
                 ...state,

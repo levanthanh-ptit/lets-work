@@ -1,6 +1,12 @@
 import * as Auth from '../actions/AuthAction'
 import axios from '../../axios/axios'
 
+export function clearStatus() {
+    return dispatch => {
+        dispatch(Auth.clearStatus())
+    }
+}
+
 export function login(username, password) {
     return async dispatch => {
         await dispatch(Auth.loginStart());
@@ -36,18 +42,17 @@ export function login(username, password) {
 }
 export function sessionLogin() {
     return async dispatch => {
-        await dispatch(Auth.loginStart());
         var token = localStorage.getItem('token');
         var userId = localStorage.getItem('userId');
-        axios.get(
+        if (userId === null) return
+        await dispatch(Auth.loginStart());
+        await axios.get(
             `/user/${userId}`
-        ).then(res => {
-            dispatch(Auth.loginSuccess({ token, ...res.data }));
+        ).then(async res => {
+            await dispatch(Auth.loginSuccess({ token, ...res.data }));
+            await dispatch(Auth.clearStatus())
         }).catch(error => {
-            if (error.response !== undefined)
-                if (error.response.data !== undefined) {
-                    dispatch(Auth.loginFail(error.response.data.message))
-                }
+            dispatch(Auth.clearStatus())
         })
 
     }

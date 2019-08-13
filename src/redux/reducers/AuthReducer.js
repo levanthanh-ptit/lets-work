@@ -10,13 +10,14 @@ const initialState = {
     bio: null,
     country: null,
     status: null,
-    error: "",
+    error: '',
     token: null
 }
 
 export default (state = initialState, { type, payload }) => {
     switch (type) {
-
+        case AUTH.CLEAR_STATUS:
+            return { ...state, status: null}
         case AUTH.LOGIN_START:
             return { ...state, ...payload, status: type }
         case AUTH.LOGIN_SUCCESS:
