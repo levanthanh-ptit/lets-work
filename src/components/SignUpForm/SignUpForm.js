@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 function SignUpForm(props) {
-    const { error, login } = props;
+    const { error, signUp } = props;
 
     const [state, setState] = useState({
         hasError: false,
@@ -56,9 +56,9 @@ function SignUpForm(props) {
     });
     const classes = useStyles();
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         let newstate = state;
-        newstate = _.mapValues(newstate,v => {
+        newstate = await _.mapValues(newstate,v => {
             let i = v;
             if (v.value === '')
                 {
@@ -71,7 +71,10 @@ function SignUpForm(props) {
             newstate.hasError = true;
             newstate.confirmPassword.error = 'The two password not match';
         }
-        setState(newstate)
+        await setState(newstate)
+        if(!state.hasError) {
+            signUp(_.mapValues(state, v => v.value))
+        }
     }
 
     const handleEdit = (feild, value, error) => {
@@ -196,7 +199,7 @@ function SignUpForm(props) {
 
 SignUpForm.propTypes = {
     error: PropTypes.string,
-    login: PropTypes.func,
+    signUp: PropTypes.func,
     onSucess: PropTypes.func
 }
 

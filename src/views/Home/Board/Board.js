@@ -178,7 +178,7 @@ function Board(props) {
         />
     )
 
-    if (auth.id === null) return <Redirect to='/' />
+    if (auth.id === null) return <Redirect to='/auth/login' />
 
     return (
         <DndProvider backend={HTML5Backend}>

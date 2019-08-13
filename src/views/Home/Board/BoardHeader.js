@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import * as color from '../../../components/assets/color';
 import { makeStyles } from '@material-ui/core/styles'
 import { Toolbar, AppBar, IconButton, Typography, Avatar } from '@material-ui/core';
-import { PersonAdd as IconPersonAdd, EditSharp as IconEditSharp } from '@material-ui/icons'
+import { PersonAdd as IconPersonAdd, EditSharp as IconEditSharp, People as IconPeople } from '@material-ui/icons'
 
 import SearchUser from './SearchUser/SearchUser'
-
+import PopUpMenu from '../../../components/PopUpMenu/PopUpMenu'
 const useStyle = makeStyles(theme => ({
     icon: {
         marginRight: theme.spacing(1)
@@ -35,6 +35,11 @@ function BoardHeader(props) {
     const [searchUserDialog, setSearchUserDialog] = useState({
         open: false
     })
+    const [memberMenu, setMemberMenu] = useState({
+        anchor: null,
+        open: false,
+    })
+
     return (
         <>
             <AppBar
@@ -52,14 +57,21 @@ function BoardHeader(props) {
                     >
                         <IconPersonAdd />
                     </IconButton>
-                    {members.map(e => (
-                        <Avatar key={e.id} className={classes.icon}>{e.fullName[0]}</Avatar>
-                    ))}
+                    <IconButton 
+                        className={classes.btnIcon}
+                        onClick={e => setMemberMenu({anchor: e.currentTarget, open: true})}
+                    >
+                        <IconPeople />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
             <SearchUser 
                 open={searchUserDialog.open}
                 onClose={ ()=> setSearchUserDialog({...searchUserDialog, open: false})}
+            />
+            <PopUpMenu anchorRoot={memberMenu.anchor} open={memberMenu.open}
+                fullList={members} fullListKey='id' displayFeild='fullName'
+                onClose={() => setMemberMenu({anchor: null, open: false})}
             />
         </>
     )

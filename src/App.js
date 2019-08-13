@@ -24,7 +24,7 @@ export function App(props) {
 					Auth.token === null ?
 						<Redirect to='/auth/login' />
 						:
-						<Redirect to='/home/boards'/>
+						(<Redirect to='/home/boards'/>)
 				}
 			</Switch>
 		</div>

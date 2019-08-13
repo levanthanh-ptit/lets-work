@@ -68,3 +68,37 @@ export function uploadProfile(id, data) {
             })
     }
 }
+export function signUp({ username, email, password, firstName, lastName }) {
+    return async dispatch => {
+        var id, token;
+        axios.post(`/auth/sign_up`,
+            {
+                username,
+                email,
+                password,
+                firstName,
+                lastName
+            })
+            .then(res => {
+                id = res.data.id;
+                token = res.data.token;
+                localStorage.setItem('userId', id);
+                localStorage.setItem('token', token);
+            }).then(() => {
+                axios.get(
+                    `/user/${id}`
+                ).then(res => {
+                    dispatch(Auth.loginSuccess({ token, ...res.data }));
+                }).catch(error => {
+                    if (error.response !== null) {
+                        dispatch(Auth.loginFail(error.response.data.message))
+                    }
+                })
+            }).catch(error => {
+                if (error.response !== undefined) {
+                    if (error.response.data !== undefined)
+                        dispatch(Auth.loginFail(error.response.data.message))
+                }
+            })
+    }
+}

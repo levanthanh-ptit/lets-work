@@ -66,6 +66,7 @@ const mapStateToProps = ({ Auth }) => ({
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
         login: Thunk.login,
+        signUp: Thunk.
     }, dispatch)
 }
 export default withLinnerProgressBar(connect(mapStateToProps, mapDispatchToProps)(AuthPage))

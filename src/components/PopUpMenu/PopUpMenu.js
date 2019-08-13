@@ -33,7 +33,7 @@ function PopUpMenu(props) {
                         <MenuItem
                             onClick={() => {
                                 onClose()
-                                onItemClick(fl);
+                                if(onItemClick)onItemClick(fl);
                             }}
                         >
                             {avatarList&&<Avatar>{fl[displayFeild][0]}</Avatar>}

@@ -48,7 +48,7 @@ function HomePage(props) {
                     path='/home/boards'
                     component={route => (<ListBoard {...route} userId={userId} />)}
                 />
-                {auth.id===null? <Redirect to='/'/>:null}
+                {auth.id===null? <Redirect to='/auth/login'/>:null}
             </Switch>
         </div>
     )
