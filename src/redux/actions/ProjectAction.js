@@ -21,7 +21,7 @@ export const loadFail = (error) => ({
     error
 })
 export const update = (payload) => ({
-    type: PROJECT.UPDATE,
+    type: PROJECT.UPDATED,
     payload: {
         ...payload
     }

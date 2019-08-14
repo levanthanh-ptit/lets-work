@@ -3,6 +3,7 @@ import { PROJECT } from '../Types'
 const initialState = {
     status: null,
     id: null,
+    error: '',
     groups: [],
     members: []
 }
@@ -10,7 +11,7 @@ const initialState = {
 export default (state = initialState, { type, payload }) => {
     switch (type) {
         case PROJECT.CLEAR_STATUS:
-            return { ...state, status: null}
+            return { ...state, status: null }
         case PROJECT.LOAD_START:
             return {
                 ...state,
@@ -20,6 +21,7 @@ export default (state = initialState, { type, payload }) => {
             return {
                 status: PROJECT.CLEAN,
                 id: null,
+                error: '',
                 groups: [],
                 members: []
             }
@@ -32,12 +34,18 @@ export default (state = initialState, { type, payload }) => {
         case PROJECT.LOAD_FAIL:
             return {
                 ...state,
-                status: PROJECT.LOAD_FAIL
+                status: PROJECT.LOAD_FAIL,
+                error: payload,
             }
-        case PROJECT.UPDATE:
+        case PROJECT.UPDATE_START:
             return {
                 ...state,
-                status: PROJECT.UPDATE,
+                status: PROJECT.UPDATE_START,
+            }
+        case PROJECT.UPDATED:
+            return {
+                ...state,
+                status: PROJECT.UPDATED,
                 ...payload
             }
         case PROJECT.ADD_TASK: {

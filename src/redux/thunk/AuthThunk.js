@@ -11,7 +11,7 @@ export function login(username, password) {
     return async dispatch => {
         await dispatch(Auth.loginStart());
         var id, token;
-        axios.post(
+        await axios.post(
             "/auth/login",
             {
                 userName: username,
@@ -22,20 +22,19 @@ export function login(username, password) {
             token = res.data.token;
             localStorage.setItem('userId', id);
             localStorage.setItem('token', token);
-        }).then(() => {
-            axios.get(
-                `/user/${id}`
-            ).then(res => {
-                dispatch(Auth.loginSuccess({ token, ...res.data }));
-            }).catch(error => {
-                if (error.response !== null) {
-                    dispatch(Auth.loginFail(error.response.data.message))
-                }
-            })
         }).catch(error => {
             if (error.response !== undefined) {
                 if (error.response.data !== undefined)
                     dispatch(Auth.loginFail(error.response.data.message))
+            }
+        })
+        await axios.get(
+            `/user/${id}`
+        ).then(res => {
+            dispatch(Auth.loginSuccess({ token, ...res.data }));
+        }).catch(error => {
+            if (error.response !== null) {
+                dispatch(Auth.loginFail(error.response.data.message))
             }
         })
     }
