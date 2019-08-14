@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 function SignUpForm(props) {
-    const { auth, signUp, clearStatus } = props;
+    const { auth, signUp, clearStatus, handleProgressBar } = props;
 
     const [state, setState] = useState({
         hasError: false,
@@ -151,6 +151,8 @@ function SignUpForm(props) {
             {...attribute}
         />
     )
+    if(auth.status === AUTH.LOGIN_START) handleProgressBar(true) 
+    else handleProgressBar(false)
     if(auth.status === AUTH.LOGIN_SUCCESS ) return <Redirect to='/' />
     return (
         <React.Fragment>

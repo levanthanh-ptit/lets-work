@@ -42,11 +42,17 @@ export default (state = initialState, { type, payload }) => {
                 ...state,
                 status: PROJECT.UPDATE_START,
             }
-        case PROJECT.UPDATED:
+        case PROJECT.UPDATE_SUCCESS:
             return {
                 ...state,
-                status: PROJECT.UPDATED,
+                status: PROJECT.UPDATE_SUCCESS,
                 ...payload
+            }
+        case PROJECT.UPDATE_FAIL:
+            return {
+                ...state,
+                status: PROJECT.UPDATE_FAIL,
+                error: payload,
             }
         case PROJECT.ADD_TASK: {
             let groups = state.groups;

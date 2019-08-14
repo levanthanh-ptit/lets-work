@@ -77,7 +77,7 @@ export function SortTasks(groupId, srcId, desId, direct) {
     }
 }
 
-export function addTask(groupId, title, callback) {
+export function addTask(groupId, title) {
     return async (dispatch, getState) => {
         dispatch(ProjectAction.loadStart());
         axios.post(
@@ -86,10 +86,8 @@ export function addTask(groupId, title, callback) {
                 title
             }
         ).then(res => {
-            callback();
             dispatch(ProjectAction.addTask(groupId, res.data));
         }).catch(err => {
-            dispatch(ProjectAction.loadFail())
         })
     }
 }
@@ -141,7 +139,7 @@ export function updateTask(groupId, task) {
 
     }
 }
-export function addGroup(projectId, title, callback) {
+export function addGroup(projectId, title) {
     return async (dispatch, getState) => {
         axios.post(
             `/project/${projectId}/add-group`,
@@ -150,9 +148,7 @@ export function addGroup(projectId, title, callback) {
             }
         ).then(res => {
             dispatch(ProjectAction.addGroup(res.data));
-            callback();
-        }).catch(err => {
-            dispatch(ProjectAction.loadFail())
+        }).catch(error => {
         })
     }
 }
@@ -174,7 +170,6 @@ export function deleteGroup(groupId) {
             dispatch(ProjectAction.update({ groups }));
 
         }).catch(err => {
-            dispatch(ProjectAction.loadFail())
         })
     }
 }
@@ -185,9 +180,7 @@ export function addMember(userId, fullName) {
             `/project/${Project.id}/add-user?user_id=${userId}&role=dev`,
         ).then(res => {
             dispatch(ProjectAction.addMember({ id: userId, fullName, ownership: 'dev' }));
-
         }).catch(err => {
-            dispatch(ProjectAction.loadFail())
         })
     }
 }

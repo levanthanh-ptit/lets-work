@@ -16,7 +16,6 @@ import {PROJECT} from '../../../redux/Types'
 import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
 import TaskDialog from './TaskDialog/TaskDialog';
-import withLinnerProgressBar from '../../../components/LinnerProgressBar/withLinnerProgressBar';
 import TextInput from '../../../components/TextInput/TextInput'
 import ConfirmBox from '../../../components/ConfirmBox/ConfirmBox'
 import BoardHeader from './BoardHeader'
@@ -25,7 +24,7 @@ import MessageDialog from '../../../components/MessageDialog/MessageDialog'
 function Board(props) {
     const classes = useStyle();
     const { load, moveTask, handleOnSortGroups, handleSortTask, handleAddTask,
-        handleAddGroup, handleDeleteGroup, handleClearStatus, handleProgressBar, 
+        handleAddGroup, handleDeleteGroup, handleClearStatus,  
     } = props;
     const data = useSelector(state => state.Project)
     const auth = useSelector(state => state.Auth)
@@ -99,10 +98,7 @@ function Board(props) {
             onGroupShouldDrop={handleOnSortGroups}
             onTaskShouldDrop={moveTask}
             onDrapChange={handleDragChange}
-            onAddTask={async (groupId, title) => {
-                await handleProgressBar(true)
-                await handleAddTask(groupId, title, () => handleProgressBar(false))
-            }}
+            onAddTask={(groupId, title) => handleAddTask(groupId, title)}
             onMenuClick={(e, id) => setAnchorGroupMenu({
                 anchor: e.currentTarget,
                 groupId: id,
@@ -119,8 +115,7 @@ function Board(props) {
             holderText='+ Add another group'
             inputPlaceHolderText='Enter group title...'
             onAdd={async (title) => {
-                await handleProgressBar(true);
-                await handleAddGroup(id, title, () => handleProgressBar(false));
+                await handleAddGroup(id, title);
             }}
         />
     )
@@ -203,7 +198,6 @@ function Board(props) {
                         {...taskDialog}
                         onClose={() => {handleTaskDialog(false)}}
                         members={data.members}
-                        handleProgressBar={handleProgressBar}
                     />}
                 <MessageDialog
                 error
@@ -235,5 +229,5 @@ const mapDispatchToProps = dispatch => {
     }, dispatch)
 }
 
-export default withLinnerProgressBar(connect(null, mapDispatchToProps)(Board))
+export default connect(null, mapDispatchToProps)(Board)
 

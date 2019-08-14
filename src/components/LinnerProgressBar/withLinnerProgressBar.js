@@ -26,7 +26,8 @@ const withLinnerProgressBar = Component => {
         const [state, setState] = useState({
             load : false
         })
-        const handleProgressBar = async (value) => {
+        const handleProgressBar = async (stateValue,value) => {
+            if(stateValue === value) return
             await setState({
                 load: value
             })
@@ -34,7 +35,7 @@ const withLinnerProgressBar = Component => {
         return (
             <div className={classes.root}>
                 {state.load===true?<LinearProgress className={classes.progressBar} />:null}
-                <Component {...props} handleProgressBar={handleProgressBar}/>
+                <Component {...props} handleProgressBar={(value) => handleProgressBar(state.load, value)}/>
             </div>
         )
     }

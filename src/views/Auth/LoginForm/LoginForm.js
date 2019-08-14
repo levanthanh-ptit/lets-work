@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 const AdapterLink = React.forwardRef((props, ref) => <RouterLink innerRef={ref} {...props} />);
 
 function LoginForm(props) {
-    const { auth, clearStatus, login } = props;
+    const { auth, clearStatus, login, handleProgressBar } = props;
 
     const [state, setState] = useState({
         username: '',
@@ -55,9 +55,8 @@ function LoginForm(props) {
     const handleLogin = () => {
         login(state.username, state.password);
     };
-    useEffect(() => {
-        console.log('mount')
-    }, [])
+    if(auth.status === AUTH.LOGIN_START) handleProgressBar(true) 
+    else handleProgressBar(false)
     if(auth.status === AUTH.LOGIN_SUCCESS ) return <Redirect to='/' />
     return (
         <React.Fragment>

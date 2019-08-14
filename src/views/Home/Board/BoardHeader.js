@@ -39,7 +39,6 @@ function BoardHeader(props) {
         anchor: null,
         open: false,
     })
-    console.log(members);
     
     return (
         <>

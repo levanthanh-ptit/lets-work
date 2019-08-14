@@ -21,10 +21,14 @@ export const loadFail = (error) => ({
     error
 })
 export const update = (payload) => ({
-    type: PROJECT.UPDATED,
+    type: PROJECT.UPDATE_SUCCESS,
     payload: {
         ...payload
     }
+})
+export const updateFail = (error) => ({
+    type: PROJECT.UPDATE_FAIL,
+    error
 })
 export const addFail = () => ({
     type: PROJECT.ADD_FAIL

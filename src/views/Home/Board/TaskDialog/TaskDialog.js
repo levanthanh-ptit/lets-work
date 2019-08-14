@@ -24,7 +24,7 @@ import PopUpMenu from '../../../../components/PopUpMenu/PopUpMenu'
 function TaskDialog(props) {
 
     const { auth, id, groupId, title, description, estimateTime, spendTime, members,
-        open, onClose, handleDeleteTask, handleUpdateTask, lock, handleProgressBar, ...other } = props;
+        open, onClose, handleDeleteTask, handleUpdateTask, lock, ...other } = props;
     const classes = useStyles();
 
     const [state, setState] = useState({
@@ -80,9 +80,7 @@ function TaskDialog(props) {
             if (k !== 'assignee') r[k] = v;
             return r;
         }, {})
-        await handleProgressBar(true)
         await handleUpdateTask(groupId, task);
-        await handleProgressBar(false)
         await onClose();
     }
 
@@ -142,7 +140,6 @@ function TaskDialog(props) {
             type: 'button', component: ListItemText, color: 'primary', icon: IconPersonAdd,
             attribute: {
                 onClick: (e) => {
-                    console.log(e);
                     setAddMemberMenu({ open: true, anchor: e.currentTarget })
                 },
                 button: true,
@@ -155,7 +152,6 @@ function TaskDialog(props) {
             type: 'button', component: ListItemText, color: 'error', icon: IconRemoveCircle,
             attribute: {
                 onClick: (e) => {
-                    console.log(e);
                     setRemoveMemberMenu({ open: true, anchor: e.currentTarget })
                 },
                 button: true,
@@ -240,9 +236,7 @@ function TaskDialog(props) {
             }}
         />
     )
-    console.log(members);
-    console.log(state.assignee);
-    
+
     return (
         <>
             <Dialog
