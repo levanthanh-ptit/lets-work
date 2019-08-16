@@ -30,7 +30,10 @@ export const useStyles = makeStyles(theme => ({
         boxSizing: 'border-box',
         alignItems: 'center',
         fontWeight: theme.typography.fontWeightMedium,
-        marginBottom: theme.spacing(1)
+        marginBottom: theme.spacing(1),
+        '&:focus-within .cancelButton':{
+            visibility: 'visible'
+        }
     },
     dialogContent: {
         minWidth: theme.spacing(70),
@@ -43,6 +46,12 @@ export const useStyles = makeStyles(theme => ({
     icon: {
         marginRight: theme.spacing(1),
         color: '#42526e'
+    },
+    sideListItem:{
+        paddingRight: 0,
+        '&:focus-within .cancelButton':{
+            visibility: 'visible'
+        }
     },
     textField: {
     },
@@ -60,5 +69,8 @@ export const useStyles = makeStyles(theme => ({
     memberCardName: {
         display: 'flex',
     },
-
+    cancelButton:{
+        visibility: 'hidden',
+        marginLeft: theme.spacing(0.5)
+    }
 }))

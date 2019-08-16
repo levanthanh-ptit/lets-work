@@ -3,7 +3,9 @@ import { PROJECT } from '../Types'
 export const clearStatus = () => ({
     type: PROJECT.CLEAR_STATUS
 })
-
+export const clearError = () => ({
+    type: PROJECT.CLEAR_ERROR
+})
 export const loadStart = () => ({
     type: PROJECT.LOAD_START,
 })
@@ -18,7 +20,7 @@ export const loadSuccess = (payload) => ({
 })
 export const loadFail = (error) => ({
     type: PROJECT.LOAD_FAIL,
-    error
+    payload: error
 })
 export const update = (payload) => ({
     type: PROJECT.UPDATE_SUCCESS,
@@ -28,7 +30,7 @@ export const update = (payload) => ({
 })
 export const updateFail = (error) => ({
     type: PROJECT.UPDATE_FAIL,
-    error
+    payload: error
 })
 export const addFail = () => ({
     type: PROJECT.ADD_FAIL

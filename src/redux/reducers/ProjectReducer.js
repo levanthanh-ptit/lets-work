@@ -12,6 +12,8 @@ export default (state = initialState, { type, payload }) => {
     switch (type) {
         case PROJECT.CLEAR_STATUS:
             return { ...state, status: null }
+        case PROJECT.CLEAR_ERROR:
+            return { ...state, error: '' }
         case PROJECT.LOAD_START:
             return {
                 ...state,

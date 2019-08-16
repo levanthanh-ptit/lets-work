@@ -8,6 +8,11 @@ export function clearStatus() {
         dispatch(ProjectAction.clearStatus())
     }
 }
+export function clearError() {
+    return dispatch => {
+        dispatch(ProjectAction.clearError())
+    }
+}
 export function load(id) {
     return async (dispatch, getState) => {
         const {Project} = getState();
@@ -88,18 +93,14 @@ export function addTask(groupId, title) {
         ).then(res => {
             dispatch(ProjectAction.addTask(groupId, res.data));
         }).catch(err => {
+            dispatch(ProjectAction.updateFail(err.response.data.message))
         })
     }
 }
 export function deleteTask(taskId, groupId) {
     return async (dispatch, getState) => {
         await axios.delete(
-            `/task/${taskId}`,
-            {
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            }
+            `/task/${taskId}`
         ).then(res => {
             let { groups } = getState().Project;
             let indexG = groups.findIndex(e => {
@@ -112,7 +113,7 @@ export function deleteTask(taskId, groupId) {
             dispatch(ProjectAction.update({ groups }));
 
         }).catch(err => {
-            dispatch(ProjectAction.loadFail())
+            dispatch(ProjectAction.updateFail(err.response.data.message))
         })
     }
 }
@@ -133,7 +134,7 @@ export function updateTask(groupId, task) {
             ).then(res => {
                 dispatch(ProjectAction.update({groups}));
             }).catch(err => {
-                dispatch(ProjectAction.loadFail())
+                dispatch(ProjectAction.updateFail(err.response.data.message))
             })
         }
 
@@ -148,7 +149,8 @@ export function addGroup(projectId, title) {
             }
         ).then(res => {
             dispatch(ProjectAction.addGroup(res.data));
-        }).catch(error => {
+        }).catch(err => {
+            dispatch(ProjectAction.updateFail(err.response.data.message))
         })
     }
 }
@@ -170,6 +172,7 @@ export function deleteGroup(groupId) {
             dispatch(ProjectAction.update({ groups }));
 
         }).catch(err => {
+            dispatch(ProjectAction.updateFail(err.response.data.message))
         })
     }
 }
@@ -181,6 +184,7 @@ export function addMember(userId, fullName) {
         ).then(res => {
             dispatch(ProjectAction.addMember({ id: userId, fullName, ownership: 'dev' }));
         }).catch(err => {
+            dispatch(ProjectAction.updateFail(err.response.data.message))
         })
     }
 }

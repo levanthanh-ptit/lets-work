@@ -9,12 +9,12 @@ import * as ProjectThunk from '../../../../redux/thunk/ProjectThunk'
 
 import {
     Dialog, DialogContent, TextField, Typography, List,
-    ListItem, ListItemIcon, ListItemText, Menu, MenuItem
+    ListItem, ListItemIcon, ListItemText, IconButton
 } from '@material-ui/core';
 import {
     Subtitles as IconSubtitles, Description as IconDescription, RemoveCircle as IconRemoveCircle,
     PersonAdd as IconPersonAdd, AccessTime as IconAccessTime, AvTimer as IconAvTimer,
-    DeleteForever as IconDeleteForever
+    DeleteForever as IconDeleteForever, CancelOutlined as IconCancel
 } from '@material-ui/icons';
 
 import ConfirmBox from '../../../../components/ConfirmBox/ConfirmBox';
@@ -57,7 +57,7 @@ function TaskDialog(props) {
     useEffect(() => {
         function effect() {
             axios.get(`/task/${id}/assignment`)
-                .then( res => {
+                .then(res => {
                     setState({
                         ...state,
                         assignee: res.data
@@ -113,6 +113,13 @@ function TaskDialog(props) {
                     value={state.title}
                     onChange={e => handleEdit('title', e.target.value)}
                 />
+                <IconButton
+                    size='small'
+                    className={`${classes.cancelButton} cancelButton`}
+                    onClick={() => setState({ ...state, title })}
+                >
+                    <IconCancel />
+                </IconButton>
             </div>
         </DialogContent>
     )
@@ -131,6 +138,13 @@ function TaskDialog(props) {
                     multiline value={state.description}
                     onChange={e => handleEdit('description', e.target.value)}
                 />
+                <IconButton
+                    size='small'
+                    className={`${classes.cancelButton} cancelButton`}
+                    onClick={() => setState({ ...state, description })}
+                >
+                    <IconCancel />
+                </IconButton>
             </div>
         </DialogContent>
     )
@@ -164,24 +178,26 @@ function TaskDialog(props) {
         {
             type: 'textfeild', component: TextField, color: 'primary', icon: IconAccessTime,
             attribute: {},
+            cancel: () => { setState({ ...state, estimateTime: estimateTime }) },
             innerAttribute: {
                 fullWidth: true,
                 label: 'Estimate time',
                 type: 'number',
                 helperText: 'Unit: hour',
-                onChange: e => handleEdit('estimateTime', e.target.value),
+                onChange: e => { if (e.target.value >= 0) handleEdit('estimateTime', e.target.value) },
                 value: state.estimateTime
             }
         },
         {
             type: 'textfeild', component: TextField, color: 'primary', icon: IconAvTimer,
             attribute: {},
+            cancel: () => { setState({ ...state, spendTime: spendTime }) },
             innerAttribute: {
                 fullWidth: true,
                 label: 'Spend time',
                 type: 'number',
                 helperText: 'Unit: hour',
-                onChange: e => handleEdit('spendTime', e.target.value),
+                onChange: e => { if (e.target.value >= 0) handleEdit('spendTime', e.target.value) },
                 value: state.spendTime
             }
         },
@@ -209,13 +225,21 @@ function TaskDialog(props) {
             >Add to task</Typography>
             <List>
                 {sideLayout.map(e => (
-                    <ListItem {...e.attribute}>
+                    <ListItem {...e.attribute} className={classes.sideListItem}>
                         <ListItemIcon>
                             <e.icon color={e.color} />
                         </ListItemIcon>
                         <e.component {...e.innerAttribute}>
                             {e.innerAttribute.children}
                         </e.component>
+                        {e.type === 'textfeild' ?
+                            <IconButton
+                                size='small'
+                                className={`${classes.cancelButton} cancelButton`}
+                                onClick={e.cancel}
+                            >
+                                <IconCancel />
+                            </IconButton> : null}
                     </ListItem>
                 ))}
             </List>
@@ -259,10 +283,10 @@ function TaskDialog(props) {
             <PopUpMenu fullList={members} fullListKey='id'
                 negativeList={state.assignee} negativeListKey='userId'
                 open={addMemberMenu.open} anchorRoot={addMemberMenu.anchor}
-                onClose={()=> setAddMemberMenu({...addMemberMenu, open: false})}
+                onClose={() => setAddMemberMenu({ ...addMemberMenu, open: false })}
                 displayFeild='fullName'
                 renderNegativeList={false}
-                onItemClick={({id}) => {
+                onItemClick={({ id }) => {
                     setAddMemberMenu({ ...addMemberMenu, open: false })
                     handleAssignTask(id)
                 }}
@@ -270,10 +294,10 @@ function TaskDialog(props) {
             <PopUpMenu fullList={members} fullListKey='id'
                 negativeList={state.assignee} negativeListKey='userId'
                 open={removeMemberMenu.open} anchorRoot={removeMemberMenu.anchor}
-                onClose={()=> setRemoveMemberMenu({...removeMemberMenu, open: false})}
+                onClose={() => setRemoveMemberMenu({ ...removeMemberMenu, open: false })}
                 displayFeild='fullName'
                 renderNegativeList={true}
-                onItemClick={({id}) => {
+                onItemClick={({ id }) => {
                     setRemoveMemberMenu({ ...removeMemberMenu, open: false })
                 }}
             />

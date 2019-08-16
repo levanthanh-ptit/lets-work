@@ -52,6 +52,8 @@ export function sessionLogin() {
             await dispatch(Auth.loginSuccess({ token, ...res.data }));
             await dispatch(Auth.clearStatus())
         }).catch(error => {
+            console.log(error);
+            
             dispatch(Auth.clearStatus())
         })
 

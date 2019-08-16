@@ -117,6 +117,8 @@ function SideBar(props) {
                     <ListItem 
                         button
                         className={classes.listItem}
+                        component={AdapterLink}
+                        to='/auth/login'
                         onClick={e => {
                             onLogOut()
                             onClose()

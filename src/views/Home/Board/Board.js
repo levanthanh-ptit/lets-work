@@ -6,13 +6,11 @@ import { connect, useSelector} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom'
 import './Board.scss';
-import axios from '../../../axios/axios'
 import { useStyle } from './BoardStyle'
 import { Menu, MenuItem } from '@material-ui/core';
 import { DeleteForever as IconDeleteForever } from '@material-ui/icons'
 
 import * as ProjectThunk from '../../../redux/thunk/ProjectThunk'
-import {PROJECT} from '../../../redux/Types'
 import Group from '../../../components/Group/Group';
 import Task from '../../../components/Group/Task/Task';
 import TaskDialog from './TaskDialog/TaskDialog';
@@ -24,19 +22,11 @@ import MessageDialog from '../../../components/MessageDialog/MessageDialog'
 function Board(props) {
     const classes = useStyle();
     const { load, moveTask, handleOnSortGroups, handleSortTask, handleAddTask,
-        handleAddGroup, handleDeleteGroup, handleClearStatus,  
+        handleAddGroup, handleDeleteGroup, handleClearStatus, handleClearError 
     } = props;
     const data = useSelector(state => state.Project)
     const auth = useSelector(state => state.Auth)
     const id = props.match.params.boardId;
-
-    const [state, setState] = useState({
-        name: null,
-        description: null,
-        id: null,
-        error: ""
-    })
-
     const [taskDialog, setTaskDialog] = useState({
         open: false,
         id: null,
@@ -63,21 +53,11 @@ function Board(props) {
         groupId: 0,
         taskId: 0
     })
-
     useEffect(() => {
         if (id) {
             load(id);
-            axios.get(`/project/${id}`)
-                .then(res => {
-                    if(res.status === 200)setState({ ...res.data })
-                }).catch(error => {
-                    if(error)
-                    if(error.response)
-                    setState({ error: error.response.message })
-                })
         }
-    }, [])
-
+    }, [id])
     const handleDragChange = (groupId, taskId) => {
         setDragUp({ groupId, taskId })
     }
@@ -181,7 +161,7 @@ function Board(props) {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className={classes.root}>
-                <BoardHeader name={state.name} members={data.members} />
+                <BoardHeader/>
                 <div className='board'>
                     {data.groups.map((group, index) => {
                         var tasks = group.tasks.map((task, t_index) => {
@@ -200,10 +180,11 @@ function Board(props) {
                         members={data.members}
                     />}
                 <MessageDialog
-                error
-                title='Load failed'
-                open={data.status === PROJECT.LOAD_FAIL}
-            />
+                    open={data.error!==''}
+                    title={data.error}
+                    error
+                    onClose={() => handleClearError()}
+                />
             </div >
         </DndProvider >
     )
@@ -225,7 +206,8 @@ const mapDispatchToProps = dispatch => {
         handleUpdateTask: ProjectThunk.updateTask,
         handleAddGroup: ProjectThunk.addGroup,
         handleDeleteGroup: ProjectThunk.deleteGroup,
-        handleClearStatus: ProjectThunk.clearStatus
+        handleClearStatus: ProjectThunk.clearStatus,
+        handleClearError: ProjectThunk.clearError,
     }, dispatch)
 }
 
