@@ -22,7 +22,8 @@ export const loadFail = (error) => ({
     type: PROJECT.LOAD_FAIL,
     payload: error
 })
-export const update = (payload) => ({
+
+export const updateSuccess = (payload) => ({
     type: PROJECT.UPDATE_SUCCESS,
     payload: {
         ...payload

@@ -22,7 +22,8 @@ import MessageDialog from '../../../components/MessageDialog/MessageDialog'
 function Board(props) {
     const classes = useStyle();
     const { load, moveTask, handleOnSortGroups, handleSortTask, handleAddTask,
-        handleAddGroup, handleDeleteGroup, handleClearStatus, handleClearError 
+        handleAddGroup, handleDeleteGroup, handleClearStatus, handleClearError,
+        history 
     } = props;
     const data = useSelector(state => state.Project)
     const auth = useSelector(state => state.Auth)
@@ -161,7 +162,7 @@ function Board(props) {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className={classes.root}>
-                <BoardHeader/>
+                <BoardHeader history={history}/>
                 <div className='board'>
                     {data.groups.map((group, index) => {
                         var tasks = group.tasks.map((task, t_index) => {

@@ -16,14 +16,14 @@ export function clearError() {
 export function load(id) {
     return async (dispatch, getState) => {
         const {Project} = getState();
-        if(Project.status === id) return
         dispatch(ProjectAction.clean());
         dispatch(ProjectAction.loadStart());
+        dispatch(ProjectAction.loadSuccess({id}));
         axios.get(
             `/project/${id}/groups`
         ).then(res => {
             if(res.status !== 200) return
-            dispatch(ProjectAction.loadSuccess({ id, groups: res.data }));
+            dispatch(ProjectAction.loadSuccess({groups: res.data }));
         }).catch(err => {
             dispatch(ProjectAction.loadFail())
         })
@@ -47,7 +47,7 @@ export function SortGroups(srcId, desId, direct) {
         groups.splice(delIndex, 1);
         let insertIndex = groups.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
         groups.splice(insertIndex, 0, srcElement);
-        dispatch(ProjectAction.update({groups}))
+        dispatch(ProjectAction.updateSuccess({groups}))
     }
 }
 
@@ -62,7 +62,7 @@ export function moveTask(taskId, srcGroupId, targetGroupId) {
             let targetGroupIndex = groups.findIndex(group => { return group.id === targetGroupId; });
             groups[srcGroupIndex].tasks.splice(taskIndex, 1);
             groups[targetGroupIndex].tasks = [...groups[targetGroupIndex].tasks, task];
-            dispatch(ProjectAction.update({groups}))
+            dispatch(ProjectAction.updateSuccess({groups}))
         } catch (error) {
         }
 
@@ -78,7 +78,7 @@ export function SortTasks(groupId, srcId, desId, direct) {
         groups[index].tasks.splice(delIndex, 1);
         let insertIndex = groups[index].tasks.findIndex(e => { return e.id === desId }) + (direct ? 1 : 0);
         groups[index].tasks.splice(insertIndex, 0, srcElement);
-        dispatch(ProjectAction.update({groups}))
+        dispatch(ProjectAction.updateSuccess({groups}))
     }
 }
 
@@ -110,7 +110,7 @@ export function deleteTask(taskId, groupId) {
                 return e.id === taskId
             })
             groups[indexG].tasks.splice(index, 1);
-            dispatch(ProjectAction.update({ groups }));
+            dispatch(ProjectAction.updateSuccess({ groups }));
 
         }).catch(err => {
             dispatch(ProjectAction.updateFail(err.response.data.message))
@@ -120,7 +120,6 @@ export function deleteTask(taskId, groupId) {
 export function updateTask(groupId, task) {
     const { id, title, description, estimateTime, spendTime } = task;
     return async (dispatch, getState) => {
-        dispatch(ProjectAction.loadStart());
         let { groups } = await getState().Project;
         let index = await groups.findIndex(v => { return v.id === groupId });
         let indexT = await groups[index].tasks.findIndex(v => { return v.id === id });
@@ -132,7 +131,7 @@ export function updateTask(groupId, task) {
                     title, description, estimateTime, spendTime
                 }
             ).then(res => {
-                dispatch(ProjectAction.update({groups}));
+                dispatch(ProjectAction.updateSuccess({groups}));
             }).catch(err => {
                 dispatch(ProjectAction.updateFail(err.response.data.message))
             })
@@ -169,7 +168,7 @@ export function deleteGroup(groupId) {
                 return e.id === groupId
             })
             groups.splice(index, 1);
-            dispatch(ProjectAction.update({ groups }));
+            dispatch(ProjectAction.updateSuccess({ groups }));
 
         }).catch(err => {
             dispatch(ProjectAction.updateFail(err.response.data.message))
@@ -183,6 +182,21 @@ export function addMember(userId, fullName) {
             `/project/${Project.id}/add-user?user_id=${userId}&role=dev`,
         ).then(res => {
             dispatch(ProjectAction.addMember({ id: userId, fullName, ownership: 'dev' }));
+        }).catch(err => {
+            dispatch(ProjectAction.updateFail(err.response.data.message))
+        })
+    }
+}
+export function removeMember(userId) {
+    return async (dispatch, getState) => {
+        var {Project} = getState();
+        var {members} = Project; 
+        await axios.delete(
+            `/project/${Project.id}/remove-user?user_id=${userId}`
+        ).then(res => {
+            let index = members.findIndex(e => e.id === userId)
+            members.splice(index, 1)
+            dispatch(ProjectAction.updateSuccess({members}))
         }).catch(err => {
             dispatch(ProjectAction.updateFail(err.response.data.message))
         })

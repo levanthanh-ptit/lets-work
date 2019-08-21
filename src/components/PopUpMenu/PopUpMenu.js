@@ -31,9 +31,8 @@ function PopUpMenu(props) {
                 if (notInclude)
                     return (
                         <MenuItem
-                            onClick={() => {
-                                onClose()
-                                if(onItemClick)onItemClick(fl);
+                            onClick={event => {
+                                if(onItemClick)onItemClick(fl, event);
                             }}
                         >
                             {avatarList&&<Avatar>{fl[displayFeild][0]}</Avatar>}

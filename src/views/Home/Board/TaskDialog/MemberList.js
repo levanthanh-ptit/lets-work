@@ -15,7 +15,7 @@ function MemberList(props) {
         </div>
             <div className={classes.line}>
                 {members.map(e => {
-                    let index = assignee.findIndex(v => e.id === v.userId)
+                    let index = assignee.findIndex(v => e.id === v.userId )
                     if (index !== -1) return (
                         <div key={e.id} className={classes.memberCard}>
                             <Avatar className={classes.icon}>{e.fullName[0]}</Avatar>

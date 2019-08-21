@@ -54,6 +54,15 @@ function TaskDialog(props) {
         anchor: null
     })
 
+    const [removeTagConfirmBox, setRemoveTagConfirmBox] = useState({
+        open: false,
+        member: {
+            id: null,
+            fullName: '',
+            ownership: ''
+        }
+    })
+
     useEffect(() => {
         function effect() {
             axios.get(`/task/${id}/assignment`)
@@ -94,7 +103,26 @@ function TaskDialog(props) {
         ).then(res => {
             setState({
                 ...state,
-                assignee: [...state.assignee, { userId }]
+                assignee: [...state.assignee, { assignerId: auth.id, userId }]
+            })
+        }).catch(error => {
+
+        })
+    }
+
+    const handleRemoveMemberTag = (userId) => {
+        axios.delete(
+            `/task/${id}/remove-user?user_id=${userId}`
+        ).then(res => {
+            var { assignee } = state;
+            console.log(assignee);
+            
+            let index = assignee.findIndex( e => e.userId === userId)
+            assignee.splice(index, 1);
+            console.log(assignee);
+            setState({
+                ...state,
+                assignee
             })
         }).catch(error => {
 
@@ -260,7 +288,17 @@ function TaskDialog(props) {
             }}
         />
     )
-
+    const renderRemoveMemberTagConfirmBox = () => {
+        return (
+        <ConfirmBox
+            open={removeTagConfirmBox.open}
+            message={`Do you want to remove ${removeTagConfirmBox.member.fullName}`}
+            variant='delete'
+            onClose={() => setRemoveTagConfirmBox({ ...removeTagConfirmBox, open: false })}
+            actionLabel='Remove'
+            action={() => handleRemoveMemberTag(removeTagConfirmBox.member.id)}
+        />
+    )}
     return (
         <>
             <Dialog
@@ -297,10 +335,15 @@ function TaskDialog(props) {
                 onClose={() => setRemoveMemberMenu({ ...removeMemberMenu, open: false })}
                 displayFeild='fullName'
                 renderNegativeList={true}
-                onItemClick={({ id }) => {
+                onItemClick={(member, event) => {
+                    setRemoveTagConfirmBox({
+                        open: true,
+                        member: { ...removeTagConfirmBox.member, ...member }
+                    })
                     setRemoveMemberMenu({ ...removeMemberMenu, open: false })
                 }}
             />
+            {renderRemoveMemberTagConfirmBox()}
         </>
     )
 }
