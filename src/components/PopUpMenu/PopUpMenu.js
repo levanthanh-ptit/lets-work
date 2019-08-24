@@ -11,7 +11,7 @@ const useStyle = makeStyles(theme => ({
 
 function PopUpMenu(props) {
     const classes = useStyle();
-    const { open, fullList, fullListKey, negativeList, negativeListKey,
+    const { open, title, fullList, fullListKey, negativeList, negativeListKey, 
         anchorRoot, onItemClick, onClose, displayFeild, renderNegativeList,
         avatarList } = props;
     var show = fullList.length - negativeList.length > 0;
@@ -23,6 +23,10 @@ function PopUpMenu(props) {
             anchorEl={anchorRoot}
             onClose={onClose}
         >
+            {title&&(
+            <Typography align='center' color='primary'>{title}</Typography>
+            
+            )}
             {fullList.map(fl => {
                 let notInclude = -1 === negativeList.findIndex(nl => {
                     return nl[negativeListKey] === fl[fullListKey]
@@ -56,7 +60,8 @@ PopUpMenu.propTypes = {
     onItemClick: PropTypes.func,
     onClose: PropTypes.func,
     renderNegativeList: PropTypes.bool,
-    avatarList: PropTypes.bool
+    avatarList: PropTypes.bool,
+    title: PropTypes.string
 }
 
 PopUpMenu.defaultProps = {

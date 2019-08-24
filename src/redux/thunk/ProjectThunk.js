@@ -54,11 +54,17 @@ export function SortGroups(srcId, desId, direct) {
 export function moveTask(taskId, srcGroupId, targetGroupId) {
     return async (dispatch, getState) => {
         try {
-            await axios.post(`/task/change-group?id=${taskId}&target_group_id=${targetGroupId}`);
+            let date;
+            await axios.post(`/task/change-group?id=${taskId}&target_group_id=${targetGroupId}`)
+            .then( res => {
+                console.log(res);
+                date = res.data.finishDate
+            })
             var {groups} = getState().Project;
             let srcGroupIndex = groups.findIndex(group => { return group.id === srcGroupId });
             let taskIndex = groups[srcGroupIndex].tasks.findIndex(t => { return t.id === taskId });
             let task = groups[srcGroupIndex].tasks[taskIndex];
+            if(date !== null) task.finishDate = date;
             let targetGroupIndex = groups.findIndex(group => { return group.id === targetGroupId; });
             groups[srcGroupIndex].tasks.splice(taskIndex, 1);
             groups[targetGroupIndex].tasks = [...groups[targetGroupIndex].tasks, task];

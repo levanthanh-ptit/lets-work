@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Toolbar, AppBar, IconButton, Typography, Menu, MenuItem } from '@material-ui/core';
 import {
     PersonAdd as IconPersonAdd, EditSharp as IconEditSharp, People as IconPeople,
-    DeleteForever as IconDeleteForever
+    DeleteForever as IconDeleteForever, DoneAllRounded as IconDoneAll
 } from '@material-ui/icons'
 import { clean } from '../../../redux/actions/ProjectAction'
 import SearchUser from './SearchUser/SearchUser'
@@ -75,6 +75,10 @@ function BoardHeader(props) {
         message: ''
     })
 
+    const [allDoneTask, setAllDoneTask] = useState({
+        open: false,
+        anchor: null,
+    })
 
     useEffect(() => {
         if (project.id) {
@@ -128,7 +132,7 @@ function BoardHeader(props) {
             <MenuItem
                 onClick={() => {
                     setMemberActionOption({ anchor: null })
-                    setMemberMenu({open: false})
+                    setMemberMenu({ open: false })
                     setConfirmRemove({
                         action: () => handleRemoveMember(memberActionOption.member.id),
                         message: `Remove member ${memberActionOption.member.fullName} with role ${memberActionOption.member.ownership}?`,
@@ -142,6 +146,22 @@ function BoardHeader(props) {
             </MenuItem>
         </Menu>
     )
+    const renderAllDoneTask = () => {
+        var groups = project.groups;
+        var tasks = [];
+        groups.map( g => {
+            g.tasks.map( t => {
+                if(t.finishDate !== null) tasks.push(t)
+            })
+        })
+        return (
+        <PopUpMenu fullList = {tasks} fullListKey='id' 
+        displayFeild='title' title='Đã hoàn thành'
+        open={allDoneTask.open} anchorRoot={allDoneTask.anchor}
+        onClose={() => setAllDoneTask({...allDoneTask, open: false})}
+        />
+        )
+    }
     return (
         <>
             <AppBar
@@ -168,6 +188,12 @@ function BoardHeader(props) {
                     >
                         <IconPeople />
                     </IconButton>
+                    <IconButton
+                        className={classes.btnIcon}
+                        onClick={e => setAllDoneTask({ anchor: e.currentTarget, open: true })}
+                    >
+                        <IconDoneAll />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
             <SearchUser
@@ -177,7 +203,7 @@ function BoardHeader(props) {
             <PopUpMenu anchorRoot={memberMenu.anchor} open={memberMenu.open}
                 fullList={project.members} fullListKey='id' displayFeild='fullName'
                 onClose={() => setMemberMenu({ open: false })}
-                onItemClick={(member, event) => {                    
+                onItemClick={(member, event) => {
                     setMemberActionOption({
                         member: { ...memberActionOption.member, ...member },
                         anchor: event.currentTarget
@@ -197,6 +223,7 @@ function BoardHeader(props) {
                 }
             />
             {renderMemberActionOption()}
+            {renderAllDoneTask()}
             <ConfirmBox open={confirmRemove.open}
                 message={confirmRemove.message}
                 variant='delete'
